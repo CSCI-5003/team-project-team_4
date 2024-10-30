@@ -25,9 +25,13 @@ public class ConnectionsGUI {
         mainPanel.setBackground(Color.white);
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createLineBorder(purple, 20));
-
+        
+        // Add Title
+        JLabel title = new JLabel("Connections");
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);        
         
 
+        mainPanel.add(title);
         mainFrame.add(mainPanel);
 
         mainFrame.pack();
