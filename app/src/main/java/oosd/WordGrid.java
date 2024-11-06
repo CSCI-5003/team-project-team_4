@@ -12,8 +12,8 @@ public class WordGrid extends JPanel {
         Color lightGray = new Color(239, 239, 230);
         int width = 130;
         int height = 95;
-        int[] x = new int[]{75,215,355,495,75,215,355,495,75,215,355,495,75,215,355,495};
-        int[] y = new int[]{95,95,95,95,200,200,200,200,305,305,305,305,410,410,410,410};
+        int[] x = new int[]{55,195,335,475,55,195,335,475,55,195,335,475,55,195,335,475};
+        int[] y = new int[]{25,25,25,25,130,130,130,130,235,235,235,235,340,340,340,340};
 
         for (int i = 0; i < buttons.length; i++) {
             String word = "Word " + i;

@@ -12,11 +12,11 @@ public class GameBoardGUI extends JFrame {
         // Create mainFrame
         JFrame mainFrame = new JFrame("Connections");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setPreferredSize(new Dimension(700, 900));
+        mainFrame.setPreferredSize(new Dimension(700, 850));
 
         // Create mainPanel
         JPanel mainPanel = new JPanel();
-        mainPanel.setPreferredSize(new Dimension(700, 900));
+        mainPanel.setPreferredSize(new Dimension(700, 850));
         mainPanel.setBackground(Color.white);
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createLineBorder(purple, 20));
@@ -39,15 +39,16 @@ public class GameBoardGUI extends JFrame {
         instructions.setForeground(purple);
 
         // Create Word Grid
+        // try replacing this with call to wordgrid class
         JPanel gridPanel = new JPanel();
-        gridPanel.setPreferredSize(new Dimension(700, 250));
+        gridPanel.setPreferredSize(new Dimension(700, 185));
         gridPanel.setLayout(null);
         gridPanel.setBackground(Color.WHITE);
         
         int width = 130;
         int height = 95;
         int[] x = new int[]{55,195,335,475,55,195,335,475,55,195,335,475,55,195,335,475};
-        int[] y = new int[]{50,50,50,50,155,155,155,155,260,260,260,260,365,365,365,365};
+        int[] y = new int[]{25,25,25,25,130,130,130,130,235,235,235,235,340,340,340,340};
 
         JButton[] buttons = new JButton[16];
 
@@ -57,7 +58,6 @@ public class GameBoardGUI extends JFrame {
             buttons[i].setEnabled(true);
             buttons[i].setBounds(x[i], y[i], width, height);
             buttons[i].setOpaque(true);
-            //buttons[i].setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             buttons[i].setBorderPainted(false);
             buttons[i].setBackground(lightGray);
 
@@ -87,7 +87,7 @@ public class GameBoardGUI extends JFrame {
 
         // Create Gameplay Buttons
         JButton shuffle = new JButton("Shuffle");
-        shuffle.setBounds(100,100,120,50);
+        shuffle.setBounds(100,75,120,50);
         shuffle.setFont(new Font("Verdana", Font.PLAIN, 12));
         shuffle.setBackground(darkGray);
         shuffle.setForeground(Color.WHITE);
@@ -95,7 +95,7 @@ public class GameBoardGUI extends JFrame {
         shuffle.setBorderPainted(false);
 
         JButton deselect = new JButton("Deselect All");
-        deselect.setBounds(240,100,160,50);
+        deselect.setBounds(240,75,160,50);
         deselect.setFont(new Font("Verdana", Font.PLAIN, 12));
         deselect.setForeground(Color.WHITE);
         deselect.setBackground(darkGray);
@@ -103,7 +103,7 @@ public class GameBoardGUI extends JFrame {
         deselect.setBorderPainted(false);
         
         JButton submit = new JButton("Submit");
-        submit.setBounds(425,100,120,50);
+        submit.setBounds(425,75,120,50);
         submit.setFont(new Font("Verdana", Font.PLAIN, 12));
         submit.setForeground(Color.WHITE);
         submit.setBackground(darkGray);
@@ -111,7 +111,7 @@ public class GameBoardGUI extends JFrame {
         submit.setBorderPainted(false);
 
         JButton menu = new JButton("Return to Menu");
-        menu.setBounds(240,175,160,25);
+        menu.setBounds(240,145,160,25);
         menu.setFont(new Font("Verdana", Font.PLAIN, 12));
         menu.setForeground(Color.WHITE);
         menu.setBackground(darkGray);
