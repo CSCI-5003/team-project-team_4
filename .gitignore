@@ -11,3 +11,6 @@ gradle-app.setting
 !gradle-wrapper.jar
 
 .DS_Store
+
+# Ignore Class Files
+*.class
