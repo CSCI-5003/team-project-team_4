@@ -5,12 +5,6 @@ import javax.swing.*;
 public class Instructions {
     public static void main(String[] args) {
         Color purple = new Color(187, 129, 197);
-        Color lightPurple = new Color(0);
-        Color blue = new Color(176, 196, 239);
-        Color yellow = new Color(249, 223, 109);
-        Color green = new Color(0160, 195, 90);
-        Color lightGray = new Color(239, 239, 230);
-        Color darkGray = new Color(90, 89, 78);
 
         JFrame instructionFrame = new JFrame("Instructions");
         instructionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -30,7 +24,7 @@ public class Instructions {
         JLabel instructionIcon = new JLabel(resizedIcon);
 
         JButton backButton = new JButton();
-        backButton.setText("Back");
+        backButton.setText("Return to Menu");
 
         instructionPanel.add(instructionIcon);
         instructionPanel.add(backButton);
