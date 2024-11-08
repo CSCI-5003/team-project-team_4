@@ -1,4 +1,4 @@
-package oosd;
+package oosd.view;
 
 import java.awt.Color;
 import java.awt.Component;
