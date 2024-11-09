@@ -2,8 +2,12 @@ package oosd.view;
 import java.awt.*;
 import javax.swing.*;
 
+import oosd.model.Game;
+
 public class GameBoardGUI extends JFrame {
-    public static void main(String[] args) {
+
+    public GameBoardGUI(Game game) {
+
         // color codes
         Color purple = new Color(187, 129, 197);
         Color lightGray = new Color(239, 239, 230);
@@ -38,30 +42,7 @@ public class GameBoardGUI extends JFrame {
         instructions.setForeground(purple);
 
         // Create Word Grid
-        // try replacing this with call to wordgrid class
-        JPanel gridPanel = new JPanel();
-        gridPanel.setPreferredSize(new Dimension(700, 450));
-        gridPanel.setLayout(null);
-        gridPanel.setBackground(Color.WHITE);
-        
-        int width = 130;
-        int height = 95;
-        int[] x = new int[]{55,195,335,475,55,195,335,475,55,195,335,475,55,195,335,475};
-        int[] y = new int[]{25,25,25,25,130,130,130,130,235,235,235,235,340,340,340,340};
-
-        JButton[] buttons = new JButton[16];
-
-        for (int i = 0; i < 16; i++) {
-            String word = "Word " + i;
-            buttons[i] = new JButton(String.valueOf(word));
-            buttons[i].setEnabled(true);
-            buttons[i].setBounds(x[i], y[i], width, height);
-            buttons[i].setOpaque(true);
-            buttons[i].setBorderPainted(false);
-            buttons[i].setBackground(lightGray);
-
-            gridPanel.add(buttons[i]);
-        }
+        WordGrid wordGrid = game.makeGrid();
 
         // Create Mistake Tracker
         JPanel mistakePanel = new JPanel();
@@ -123,7 +104,7 @@ public class GameBoardGUI extends JFrame {
         // Fill Panels
         mainFrame.add(mainPanel);
         mainPanel.add(headingPanel);
-        mainPanel.add(gridPanel);
+        mainPanel.add(wordGrid);
         mainPanel.add(mistakePanel);
         mainPanel.add(buttonPanel);
         mainPanel.add(returnPanel);
