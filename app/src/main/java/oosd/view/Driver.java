@@ -7,7 +7,7 @@ public class Driver {
 
     private static MenuGUI menu;
     private static DifficultyGUI difficulty;
-    private static GameBoardGUI game;
+    //private static GameBoardGUI game;
     private static HighScores score;
     private static Instructions howTo;
 
