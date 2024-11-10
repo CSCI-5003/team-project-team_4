@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -14,18 +15,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
-public class HighScores {
+public class HighScores extends JFrame{
 
-    public HighScores() {
+    public HighScores(ActionListener backActionListener) {
         // color codes
         Color purple = new Color(187, 129, 197);
 
-        // Create mainFrame
-        JFrame mainFrame = new JFrame("Connections");
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setPreferredSize(new Dimension(700, 800));
+        // Create scoreFrame
+        this.setTitle("Connections");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setPreferredSize(new Dimension(700, 800));
+        this.setResizable(false);
 
         // Create mainPanel
         JPanel mainPanel = new JPanel();
@@ -82,9 +83,10 @@ public class HighScores {
         returnButton.setOpaque(true);
         returnButton.setBorder(BorderFactory.createLineBorder(purple, 5));
         returnButton.setForeground(Color.white);
+        returnButton.addActionListener(backActionListener);
 
         // Fill Panels
-        mainFrame.add(mainPanel);
+        this.add(mainPanel);
         mainPanel.add(headingPanel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         mainPanel.add(scorePanel);
@@ -96,11 +98,7 @@ public class HighScores {
         headingPanel.add(highScore);
         returnPanel.add(returnButton);
 
-        mainFrame.pack();
-        mainFrame.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new HighScores());
+        this.pack();
+        this.setVisible(true);
     }
 }

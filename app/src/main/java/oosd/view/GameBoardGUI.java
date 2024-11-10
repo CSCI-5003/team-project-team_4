@@ -1,18 +1,21 @@
 package oosd.view;
 import java.awt.*;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
 public class GameBoardGUI extends JFrame {
-    public static void main(String[] args) {
+    public GameBoardGUI(ActionListener backActionListener) {
         // color codes
         Color purple = new Color(187, 129, 197);
         Color lightGray = new Color(239, 239, 230);
         Color darkGray = new Color(90, 89, 78);
 
-        // Create mainFrame
-        JFrame mainFrame = new JFrame("Connections");
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setPreferredSize(new Dimension(700, 800));
+        // Create gameBoardFrame
+        this.setTitle("Connections");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setPreferredSize(new Dimension(700, 800));
+        this.setResizable(false);
 
         // Create mainPanel
         JPanel mainPanel = new JPanel();
@@ -119,9 +122,10 @@ public class GameBoardGUI extends JFrame {
         returnButton.setOpaque(true);
         returnButton.setBorder(BorderFactory.createLineBorder(purple, 5));
         returnButton.setForeground(Color.white);
+        returnButton.addActionListener(backActionListener);
 
         // Fill Panels
-        mainFrame.add(mainPanel);
+        this.add(mainPanel);
         mainPanel.add(headingPanel);
         mainPanel.add(gridPanel);
         mainPanel.add(mistakePanel);
@@ -141,7 +145,7 @@ public class GameBoardGUI extends JFrame {
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         returnPanel.add(returnButton);
 
-        mainFrame.pack();
-        mainFrame.setVisible(true);
+        this.pack();
+        this.setVisible(true);
     }
 }

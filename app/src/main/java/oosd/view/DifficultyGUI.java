@@ -1,20 +1,61 @@
 package oosd.view;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
 import javax.swing.*;
 
-public class DifficultyGUI extends JPanel {
+public class DifficultyGUI extends JFrame {
+    
+    private DifficultyGUI difficulty;
+    private GameBoardGUI game;
        
-    public static void main(String[] args) {
+    public DifficultyGUI(BackListener backListener) {
         // color codes
         Color purple = new Color(187, 129, 197);
         Color blue = new Color(176, 196, 239);
         Color yellow = new Color(249, 223, 109);
         Color green = new Color(160, 195, 90);
 
+        difficulty = this;
+
+        // define action listeners
+        ActionListener easyListener = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                difficulty.setVisible(false);
+                BackListener back = new BackListener();
+                game = new GameBoardGUI(back);
+                back.setNewFrame(backListener.getNewFrame());
+                back.setOldFrame(game);
+            }
+        };
+
+        ActionListener mediumListener = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                difficulty.setVisible(false);
+                BackListener back = new BackListener();
+                game = new GameBoardGUI(back);
+                back.setNewFrame(backListener.getNewFrame());
+                back.setOldFrame(game);
+                
+            }
+        };
+
+        ActionListener hardListener = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                difficulty.setVisible(false);
+                BackListener back = new BackListener();
+                game = new GameBoardGUI(back);
+                back.setNewFrame(backListener.getNewFrame());
+                back.setOldFrame(game);
+            }
+        };
+
         // Create mainFrame
-        JFrame mainFrame = new JFrame("Connections");
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setPreferredSize(new Dimension(700, 800));
+        this.setTitle("Connections");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setPreferredSize(new Dimension(700, 800));
+        this.setResizable(false);
 
         // Create mainPanel
         JPanel mainPanel = new JPanel();
@@ -54,6 +95,7 @@ public class DifficultyGUI extends JPanel {
         easy.setBackground(yellow);
         easy.setOpaque(true);
         easy.setBorderPainted(false);
+        easy.addActionListener(easyListener);
 
         JButton medium = new JButton("Medium");
         medium.setFont(new Font("Verdana", Font.PLAIN, 30));
@@ -61,6 +103,7 @@ public class DifficultyGUI extends JPanel {
         medium.setBackground(green);
         medium.setOpaque(true);
         medium.setBorderPainted(false);
+        medium.addActionListener(mediumListener);
 
         JButton hard = new JButton("Hard");
         hard.setFont(new Font("Verdana", Font.PLAIN, 30));
@@ -68,6 +111,7 @@ public class DifficultyGUI extends JPanel {
         hard.setBackground(blue);
         hard.setOpaque(true);
         hard.setBorderPainted(false);
+        hard.addActionListener(hardListener);
 
         // Return Panel
         JPanel returnPanel = new JPanel();
@@ -81,9 +125,10 @@ public class DifficultyGUI extends JPanel {
         returnButton.setOpaque(true);
         returnButton.setBorder(BorderFactory.createLineBorder(purple, 5));
         returnButton.setForeground(Color.white);
+        returnButton.addActionListener(backListener);
 
         // Fill Panels
-        mainFrame.add(mainPanel);
+        this.add(mainPanel);
         mainPanel.add(headingPanel);
         mainPanel.add(buttonPanel);
         mainPanel.add(returnPanel);
@@ -96,8 +141,8 @@ public class DifficultyGUI extends JPanel {
         returnPanel.add(returnButton);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
-        mainFrame.pack();
-        mainFrame.setVisible(true);
+        this.pack();
+        this.setVisible(true);
     }
 }
 

@@ -1,14 +1,18 @@
 package oosd.view;
 import java.awt.*;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
-public class Instructions {
-    public static void main(String[] args) {
+public class Instructions extends JFrame {
+
+    public Instructions(ActionListener backActionListener) {
         Color purple = new Color(187, 129, 197);
 
-        JFrame instructionFrame = new JFrame("Instructions");
-        instructionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        instructionFrame.setPreferredSize(new Dimension(700, 800));
+        this.setTitle("Connections");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setPreferredSize(new Dimension(700, 800));
+        this.setResizable(false);
 
         JPanel instructionPanel = new JPanel();
         instructionPanel.setBackground(Color.white);
@@ -25,12 +29,13 @@ public class Instructions {
 
         JButton backButton = new JButton();
         backButton.setText("Return to Menu");
+        backButton.addActionListener(backActionListener);
 
         instructionPanel.add(instructionIcon);
         instructionPanel.add(backButton);
-        instructionFrame.add(instructionPanel);
+        this.add(instructionPanel);
 
-        instructionFrame.pack();
-        instructionFrame.setVisible(true);
+        this.pack();
+        this.setVisible(true);
     } 
 }

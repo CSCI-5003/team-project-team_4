@@ -2,19 +2,22 @@ package oosd.view;
 import java.awt.*;
 import javax.swing.*;
 
-public class MenuGUI extends JPanel {
+import java.awt.event.ActionListener;
+
+public class MenuGUI extends JFrame {
        
-    public static void main(String[] args) {
+    public MenuGUI(ActionListener playListener, ActionListener scoreListener, ActionListener howToListener) {
         // color codes
         Color purple = new Color(187, 129, 197);
         Color blue = new Color(176, 196, 239);
         Color yellow = new Color(249, 223, 109);
         Color green = new Color(160, 195, 90);
 
-        // Create mainFrame
-        JFrame mainFrame = new JFrame("Connections");
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setPreferredSize(new Dimension(700, 800));
+        // Create menuFrame
+        this.setTitle("Connections");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setPreferredSize(new Dimension(700, 800));
+        this.setResizable(false);
 
         // Create mainPanel
         JPanel mainPanel = new JPanel();
@@ -47,6 +50,7 @@ public class MenuGUI extends JPanel {
         playNowBut.setBackground(yellow);
         playNowBut.setOpaque(true);
         playNowBut.setBorderPainted(false);
+        playNowBut.addActionListener(playListener);
 
         JButton highScoresBut = new JButton("High Scores");
         highScoresBut.setFont(new Font("Verdana", Font.PLAIN, 30));
@@ -54,6 +58,7 @@ public class MenuGUI extends JPanel {
         highScoresBut.setBackground(green);
         highScoresBut.setOpaque(true);
         highScoresBut.setBorderPainted(false);
+        highScoresBut.addActionListener(scoreListener);
 
         JButton howToBut = new JButton("How To Play");
         howToBut.setFont(new Font("Verdana", Font.PLAIN, 30));
@@ -61,9 +66,10 @@ public class MenuGUI extends JPanel {
         howToBut.setBackground(blue);
         howToBut.setOpaque(true);
         howToBut.setBorderPainted(false);
+        howToBut.addActionListener(howToListener);
 
         // Fill Panels
-        mainFrame.add(mainPanel);
+        this.add(mainPanel);
         mainPanel.add(headingPanel);
         mainPanel.add(buttonPanel);
         
@@ -72,7 +78,7 @@ public class MenuGUI extends JPanel {
         buttonPanel.add(highScoresBut);
         buttonPanel.add(howToBut);
 
-        mainFrame.pack();
-        mainFrame.setVisible(true);
+        this.pack();
+        this.setVisible(true);
     }
 }
