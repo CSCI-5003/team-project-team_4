@@ -13,13 +13,13 @@ import oosd.view.Word;
 
 public class Game {
     private GameDifficulty gameDifficulty;
-    private GameBoardGUI gameBoardGUI;
+    //private GameBoardGUI gameBoardGUI;
     private ArrayList<String[]>[] groupArray = new ArrayList[4];
     String filePath = "app/src/files/WordBank.csv";
 
     public Game(GameDifficulty gameDifficulty) {
         this.gameDifficulty = gameDifficulty;
-        this.gameBoardGUI = new GameBoardGUI(this);
+        //this.gameBoardGUI = new GameBoardGUI(this);
 
         for (int i = 0; i < 4; i++) {
             groupArray[i] = new ArrayList<>();

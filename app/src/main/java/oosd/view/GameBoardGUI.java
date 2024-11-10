@@ -16,6 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+//import oosd.model.Game;
+
 // - FR3: when buttons are clicked, they are highlighted (change color). Only four buttons can be highlighted. Add the selected buttons to an ArrayList. 
 //When un-selected, the color goes back to lightGray and word is removed from ArrayList
 
@@ -179,7 +181,8 @@ public class GameBoardGUI extends JFrame {
             selectedButtons.remove(button);
         } else {
             if (selectedButtons.size() < MAX_SELECTION) {
-                button.setBackground(Color.YELLOW);
+                button.setBackground(darkGray);
+                button.setForeground(Color.WHITE);
                 selectedButtons.add(button);
             }
         }
