@@ -1,5 +1,5 @@
 package oosd.model;
 
-public enum WordDifficulty {
+public enum WordDifficulty{
     YELLOW, GREEN, BLUE, PURPLE
 }
