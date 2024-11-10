@@ -19,7 +19,6 @@ import javax.swing.JPanel;
 // - FR3: when buttons are clicked, they are highlighted (change color). Only four buttons can be highlighted. Add the selected buttons to an ArrayList. 
 //When un-selected, the color goes back to lightGray and word is removed from ArrayList
 
-
 public class GameBoardGUI extends JFrame {
 
     private Color purple = new Color(187, 129, 197);
@@ -185,9 +184,8 @@ public class GameBoardGUI extends JFrame {
         }
     }
 
-
-
     public static void main(String[] args) {
         new GameBoardGUI();
     }
 }
+
