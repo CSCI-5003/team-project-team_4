@@ -1,14 +1,34 @@
 package oosd.view;
-import java.awt.*;
-import javax.swing.*;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+// - FR3: when buttons are clicked, they are highlighted (change color). Only four buttons can be highlighted. Add the selected buttons to an ArrayList. 
+//When un-selected, the color goes back to lightGray and word is removed from ArrayList
+
 
 public class GameBoardGUI extends JFrame {
-    public static void main(String[] args) {
-        // color codes
-        Color purple = new Color(187, 129, 197);
-        Color lightGray = new Color(239, 239, 230);
-        Color darkGray = new Color(90, 89, 78);
 
+    private Color purple = new Color(187, 129, 197);
+    private Color lightGray = new Color(239, 239, 230);
+    private Color darkGray = new Color(90, 89, 78);
+    private ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
+    private int MAX_SELECTION = 4;
+      
+    public GameBoardGUI() {
         // Create mainFrame
         JFrame mainFrame = new JFrame("Connections");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,7 +80,15 @@ public class GameBoardGUI extends JFrame {
             buttons[i].setBorderPainted(false);
             buttons[i].setBackground(lightGray);
 
+            buttons[i].addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    handleButtonClick((JButton) e.getSource());
+                }
+            });
+
             gridPanel.add(buttons[i]);
+
         }
 
         // Create Mistake Tracker
@@ -77,7 +105,7 @@ public class GameBoardGUI extends JFrame {
         JLabel life1 = new JLabel(" ⬤");
         JLabel life2 = new JLabel(" ⬤");
         JLabel life3 = new JLabel(" ⬤");
-        JLabel life4 = new JLabel(" ⬤");
+        JLabel life4 = new JLabel(" ⬤");    
 
         life1.setFont(new Font("Verdana", Font.PLAIN, 20));
         life2.setFont(new Font("Verdana", Font.PLAIN, 20));
@@ -143,5 +171,23 @@ public class GameBoardGUI extends JFrame {
 
         mainFrame.pack();
         mainFrame.setVisible(true);
+    }
+
+    private void handleButtonClick(JButton button) {
+        if (selectedButtons.contains(button)) {
+            button.setBackground(lightGray);
+            selectedButtons.remove(button);
+        } else {
+            if (selectedButtons.size() < MAX_SELECTION) {
+                button.setBackground(Color.YELLOW);
+                selectedButtons.add(button);
+            }
+        }
+    }
+
+
+
+    public static void main(String[] args) {
+        new GameBoardGUI();
     }
 }
