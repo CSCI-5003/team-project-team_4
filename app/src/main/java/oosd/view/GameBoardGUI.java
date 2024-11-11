@@ -16,6 +16,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import oosd.model.Game;
+import oosd.model.GameDifficulty;
+
 //import oosd.model.Game;
 
 // - FR3: when buttons are clicked, they are highlighted (change color). Only four buttons can be highlighted. Add the selected buttons to an ArrayList. 
@@ -29,7 +32,8 @@ public class GameBoardGUI extends JFrame {
     private ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
     private int MAX_SELECTION = 4;
       
-    public GameBoardGUI(ActionListener backActionListener) {
+    public GameBoardGUI(ActionListener backActionListener, GameDifficulty gameDifficulty) {
+        Game game = new Game(gameDifficulty);
         // Create mainFrame
         this.setTitle("Connections");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,23 +62,18 @@ public class GameBoardGUI extends JFrame {
         instructions.setFont(new Font("Verdana", Font.BOLD, 20));
         instructions.setForeground(purple);
 
-        // Create Word Grid
-        // try replacing this with call to wordgrid class
-        JPanel gridPanel = new JPanel();
-        gridPanel.setPreferredSize(new Dimension(700, 450));
-        gridPanel.setLayout(null);
-        gridPanel.setBackground(Color.WHITE);
+
         
         int width = 130;
         int height = 95;
         int[] x = new int[]{55,195,335,475,55,195,335,475,55,195,335,475,55,195,335,475};
         int[] y = new int[]{25,25,25,25,130,130,130,130,235,235,235,235,340,340,340,340};
 
-        JButton[] buttons = new JButton[16];
+        Word[] buttons = new Word[16];
 
         for (int i = 0; i < 16; i++) {
             String word = "Word " + i;
-            buttons[i] = new JButton(String.valueOf(word));
+            buttons[i] = new Word(String.valueOf(word));
             buttons[i].setEnabled(true);
             buttons[i].setBounds(x[i], y[i], width, height);
             buttons[i].setOpaque(true);
@@ -84,12 +83,23 @@ public class GameBoardGUI extends JFrame {
             buttons[i].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    handleButtonClick((JButton) e.getSource());
+                    handleButtonClick((Word) e.getSource());
                 }
             });
 
-            gridPanel.add(buttons[i]);
+            
 
+        }
+
+        WordGrid gridPanel = game.makeGrid(buttons);
+        gridPanel.setPreferredSize(new Dimension(700, 450));
+        gridPanel.setLayout(null);
+        gridPanel.setBackground(Color.WHITE);
+        
+        
+
+        for (int i = 0; i < 16; i++) {
+            gridPanel.add(buttons[i]);
         }
 
         // Create Mistake Tracker
@@ -175,7 +185,7 @@ public class GameBoardGUI extends JFrame {
         this.setVisible(true);
     }
 
-    private void handleButtonClick(JButton button) {
+    private void handleButtonClick(Word button) {
         if (selectedButtons.contains(button)) {
             button.setBackground(lightGray);
             selectedButtons.remove(button);

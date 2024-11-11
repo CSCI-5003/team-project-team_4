@@ -1,7 +1,13 @@
-package oosd.view;
+package oosd;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import oosd.view.BackListener;
+import oosd.view.DifficultyGUI;
+import oosd.view.HighScores;
+import oosd.view.Instructions;
+import oosd.view.MenuGUI;
 
 public class Driver {
 

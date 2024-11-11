@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.*;
 
+import oosd.model.GameDifficulty;
+
 public class DifficultyGUI extends JFrame {
     
     private DifficultyGUI difficulty;
@@ -24,7 +26,7 @@ public class DifficultyGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 difficulty.setVisible(false);
                 BackListener back = new BackListener();
-                game = new GameBoardGUI(back);
+                game = new GameBoardGUI(back, GameDifficulty.EASY);
                 back.setNewFrame(backListener.getNewFrame());
                 back.setOldFrame(game);
             }
@@ -34,7 +36,7 @@ public class DifficultyGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 difficulty.setVisible(false);
                 BackListener back = new BackListener();
-                game = new GameBoardGUI(back);
+                game = new GameBoardGUI(back, GameDifficulty.MEDIUM);
                 back.setNewFrame(backListener.getNewFrame());
                 back.setOldFrame(game);
                 
@@ -45,7 +47,7 @@ public class DifficultyGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 difficulty.setVisible(false);
                 BackListener back = new BackListener();
-                game = new GameBoardGUI(back);
+                game = new GameBoardGUI(back, GameDifficulty.HARD);
                 back.setNewFrame(backListener.getNewFrame());
                 back.setOldFrame(game);
             }

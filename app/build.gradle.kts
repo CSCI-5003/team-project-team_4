@@ -34,5 +34,5 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "oosd.App"
+    mainClass = "oosd.Driver"
 }
