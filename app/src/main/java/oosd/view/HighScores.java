@@ -73,7 +73,6 @@ public class HighScores extends JFrame{
 
         // Return Panel
         JPanel returnPanel = new JPanel();
-        returnPanel.setLayout(null); 
         returnPanel.setLayout(new BoxLayout(returnPanel, BoxLayout.X_AXIS)); 
         returnPanel.setBackground(Color.white);
         

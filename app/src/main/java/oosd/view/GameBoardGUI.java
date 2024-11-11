@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -113,6 +115,7 @@ public class GameBoardGUI extends JFrame {
         JLabel mistakes = new JLabel("Mistakes Remaining: ");
         mistakes.setFont(new Font("Verdana", Font.PLAIN, 15));
 
+        
         JLabel life1 = new JLabel(" ⬤");
         JLabel life2 = new JLabel(" ⬤");
         JLabel life3 = new JLabel(" ⬤");
@@ -146,7 +149,6 @@ public class GameBoardGUI extends JFrame {
 
         // Return Panel
         JPanel returnPanel = new JPanel();
-        returnPanel.setLayout(null); 
         returnPanel.setLayout(new BoxLayout(returnPanel, BoxLayout.X_AXIS)); 
         buttonPanel.setPreferredSize(new Dimension(700, 50));
         returnPanel.setBackground(Color.white);
@@ -188,6 +190,7 @@ public class GameBoardGUI extends JFrame {
     private void handleButtonClick(Word button) {
         if (selectedButtons.contains(button)) {
             button.setBackground(lightGray);
+            button.setForeground(Color.BLACK);
             selectedButtons.remove(button);
         } else {
             if (selectedButtons.size() < MAX_SELECTION) {
@@ -196,6 +199,11 @@ public class GameBoardGUI extends JFrame {
                 selectedButtons.add(button);
             }
         }
+    }
+
+
+    private void drawDots(Graphics2D g2d, int x, int y) {
+            g2d.fillOval(x, y, 30, 30);
     }
 }
 
