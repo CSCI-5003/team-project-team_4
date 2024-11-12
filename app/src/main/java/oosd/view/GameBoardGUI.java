@@ -9,6 +9,9 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -20,6 +23,8 @@ import javax.swing.JPanel;
 
 import oosd.model.Game;
 import oosd.model.GameDifficulty;
+import oosd.model.WordDifficulty;
+import oosd.model.WordGroup;
 
 //import oosd.model.Game;
 
@@ -33,9 +38,10 @@ public class GameBoardGUI extends JFrame {
     private Color darkGray = new Color(90, 89, 78);
     private ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
     private int MAX_SELECTION = 4;
+    Game game;
       
     public GameBoardGUI(ActionListener backActionListener, GameDifficulty gameDifficulty) {
-        Game game = new Game(gameDifficulty);
+        game = new Game(gameDifficulty);
         // Create mainFrame
         this.setTitle("Connections");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -93,7 +99,7 @@ public class GameBoardGUI extends JFrame {
 
         }
 
-        WordGrid gridPanel = game.makeGrid(buttons);
+        WordGrid gridPanel = makeGrid(buttons);
         gridPanel.setPreferredSize(new Dimension(700, 450));
         gridPanel.setLayout(null);
         gridPanel.setBackground(Color.WHITE);
@@ -201,6 +207,117 @@ public class GameBoardGUI extends JFrame {
         }
     }
 
+    private String getIndividualWord( List<String[]> colorList, int i, int randomIntInRange) {
+        String[] groupStringArray = colorList.get(randomIntInRange);
+        String individualString = groupStringArray[i + 4];
+        return individualString;
+    }
+
+    private void randomizeWords(Word[] words, WordDifficulty wordDifficulty) {
+        Random random = new Random();
+        HashMap<String, List<String[]>> dictionary = this.game.getWordDictionary();
+        //System.out.println(words[0].getText());
+        List<String[]> yellowList = dictionary.get("Yellow");
+        List<String[]> greenList = dictionary.get("Green");
+        List<String[]> blueList = dictionary.get("Blue");
+        List<String[]> purpleList = dictionary.get("Purple");
+
+        int yellowIntInRange = random.nextInt(yellowList.size());
+        int greenIntInRange = random.nextInt(greenList.size());
+        int blueIntInRange = random.nextInt(blueList.size());
+        int purpleIntInRange = random.nextInt(purpleList.size());
+        for (int i = 0; i < 4; i++) {
+            //System.out.println("setting text in getWords");
+            
+            String individualString = "not initialized";
+            switch (wordDifficulty) {
+                case WordDifficulty.YELLOW:
+                    individualString = getIndividualWord(yellowList, i, yellowIntInRange);
+                    System.out.println("Yellow Group: " + individualString);
+                    break;
+                case WordDifficulty.GREEN:
+                    individualString = getIndividualWord(greenList, i, greenIntInRange);
+                    System.out.println("Green Group: " + individualString);
+                    break;
+                case WordDifficulty.BLUE:
+                    individualString = getIndividualWord(blueList, i, blueIntInRange);
+                    System.out.println("Blue Group: " + individualString);
+                    break;
+                case WordDifficulty.PURPLE:
+                    individualString = getIndividualWord(purpleList, i, purpleIntInRange);
+                    System.out.println("Purple Group: " + individualString);
+                    break;
+            }
+            words[i].updateText(individualString);
+            //System.out.println(words[i].getText());
+        }
+    }
+
+    private WordGrid makeGrid(Word[] wordArray) {
+        WordGroup[] wordGroups = new WordGroup[4];
+        int wordCount = 0;
+        for (int i = 0; i < 4; i++) {
+            WordDifficulty wordDifficulty = WordDifficulty.YELLOW;
+            switch (this.game.getGameDifficulty()) {
+                case EASY:
+                    switch (i) {
+                        case 0:
+                            wordDifficulty = WordDifficulty.YELLOW;
+                            break;
+                        case 1:
+                        case 2:
+                            wordDifficulty = WordDifficulty.GREEN;
+                            break;
+                        case 3:
+                            wordDifficulty = WordDifficulty.BLUE;
+                            break;
+                    }
+                    break;
+                case MEDIUM:
+                    switch (i) {
+                        case 0:
+                            wordDifficulty = WordDifficulty.YELLOW;
+                            break;
+                        case 1:
+                            wordDifficulty = WordDifficulty.GREEN;
+                            break;
+                        case 2:
+                            wordDifficulty = WordDifficulty.BLUE;
+                            break;
+                        case 3:
+                            wordDifficulty = WordDifficulty.PURPLE;
+                            break;
+                    }
+                    break;
+                case HARD:
+                    switch (i) {
+                        case 0:
+                            wordDifficulty = WordDifficulty.GREEN;
+                            break;
+                        case 1:
+                        case 2:
+                            wordDifficulty = WordDifficulty.BLUE;
+                            break;
+                        case 3:
+                            wordDifficulty = WordDifficulty.PURPLE;
+                            break;
+                    }
+                    break;
+            }
+            Word[] wordArraySubset = new Word[4];
+            for (int j = 0; j < 4; j++) {
+                wordArraySubset[j] = wordArray[wordCount];
+                //System.out.println(wordArray[wordCount].getText());
+                wordCount++;
+            }
+            randomizeWords(wordArraySubset, wordDifficulty);
+            WordGroup wordGroup = new WordGroup(wordArraySubset, wordDifficulty);
+            wordGroups[i] = wordGroup;
+        }
+        WordGrid wordGrid = new WordGrid(wordGroups);
+        //System.out.println("returning the wordGrid that was made");
+        return wordGrid;
+    }
 
     private void drawDots(Graphics2D g2d, int x, int y) {
             g2d.fillOval(x, y, 30, 30);
