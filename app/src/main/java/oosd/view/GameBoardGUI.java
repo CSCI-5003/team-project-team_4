@@ -100,7 +100,6 @@ public class GameBoardGUI extends JFrame {
         }
 
         WordGrid gridPanel = makeGrid(buttons);
-        this.wordGrid = gridPanel;
         gridPanel.setPreferredSize(new Dimension(700, 450));
         gridPanel.setLayout(null);
         gridPanel.setBackground(Color.WHITE);
@@ -110,6 +109,8 @@ public class GameBoardGUI extends JFrame {
         for (int i = 0; i < 16; i++) {
             gridPanel.add(buttons[i]);
         }
+
+        this.wordGrid = gridPanel;
 
         // Create Mistake Tracker
         JPanel mistakePanel = new JPanel();
