@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import oosd.model.Game;
 import oosd.model.GameDifficulty;
 import oosd.model.WordDifficulty;
+//import oosd.model.WordGroup;
 
 //import oosd.model.Game;
 
@@ -101,7 +102,7 @@ public class GameBoardGUI extends JFrame {
         WordGrid gridPanel = makeGrid(buttons);
         gridPanel.setPreferredSize(new Dimension(700, 450));
         gridPanel.setLayout(null);
-        gridPanel.setBackground(Color.WHITE);
+        gridPanel.setBackground(Color.WHITE);  
         
         
 
