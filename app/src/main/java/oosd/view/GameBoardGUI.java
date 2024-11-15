@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 import oosd.model.Game;
 import oosd.model.GameDifficulty;
 import oosd.model.WordDifficulty;
-import oosd.model.WordGroup;
 
 //import oosd.model.Game;
 

@@ -1,6 +1,5 @@
-package oosd.model;
+package oosd.view;
 
-import oosd.view.Word;
 import oosd.model.WordDifficulty;
 
 public class WordGroup {
@@ -10,5 +9,13 @@ public class WordGroup {
     public WordGroup(Word[] wordList, WordDifficulty difficulty) {
         this.wordList = wordList;
         this.difficulty = difficulty;
+    }
+
+    public Word[] getWordList() {
+        return this.wordList;
+    }
+
+    public WordDifficulty geWordDifficulty() {
+        return this.difficulty;
     }
 }

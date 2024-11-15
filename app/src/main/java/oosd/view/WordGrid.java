@@ -3,8 +3,6 @@ import javax.swing.JPanel;
 
 import java.util.ArrayList;
 
-import oosd.model.WordGroup;
-
 public class WordGrid extends JPanel {
     
     private Word[] buttons = new Word[16];
