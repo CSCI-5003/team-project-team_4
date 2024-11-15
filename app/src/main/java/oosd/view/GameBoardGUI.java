@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class GameBoardGUI extends JFrame {
     private Color purple = new Color(187, 129, 197);
     private Color lightGray = new Color(239, 239, 230);
     private Color darkGray = new Color(90, 89, 78);
+
     private ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
     private int MAX_SELECTION = 4;
     Game game;
@@ -46,6 +48,7 @@ public class GameBoardGUI extends JFrame {
         this.setTitle("Connections");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setPreferredSize(new Dimension(700, 800));
+        this.setResizable(false);
 
         // Create mainPanel
         JPanel mainPanel = new JPanel();
@@ -56,8 +59,8 @@ public class GameBoardGUI extends JFrame {
         
         // Create Title & Heading
         JPanel headingPanel = new JPanel();
-        headingPanel.setPreferredSize(new Dimension(700, 100));
-        headingPanel.setBackground(Color.white);
+        headingPanel.setPreferredSize(new Dimension(700, 130));
+        headingPanel.setBackground(Color.WHITE);
         headingPanel.setLayout(new BoxLayout(headingPanel, BoxLayout.Y_AXIS));
 
         JLabel title = new JLabel("Connections");
@@ -70,8 +73,14 @@ public class GameBoardGUI extends JFrame {
         instructions.setFont(new Font("Verdana", Font.BOLD, 20));
         instructions.setForeground(purple);
 
+        JLabel messageLabel = new JLabel();
+        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        messageLabel.setFont(new Font("Verdana", Font.BOLD, 15));
+        messageLabel.setBorder(BorderFactory.createEmptyBorder(15,0,5,0));
+        messageLabel.setForeground(darkGray);
+        messageLabel.setText("Message to User");
 
-        
+        // Create Word Grid
         int width = 130;
         int height = 95;
         int[] x = new int[]{55,195,335,475,55,195,335,475,55,195,335,475,55,195,335,475};
@@ -94,16 +103,12 @@ public class GameBoardGUI extends JFrame {
                     handleButtonClick((Word) e.getSource());
                 }
             });
-
-            
-
         }
 
         WordGrid gridPanel = makeGrid(buttons);
-        gridPanel.setPreferredSize(new Dimension(700, 450));
+        gridPanel.setPreferredSize(new Dimension(700, 415));
         gridPanel.setLayout(null);
         gridPanel.setBackground(Color.WHITE);  
-        
         
 
         for (int i = 0; i < 16; i++) {
@@ -115,35 +120,33 @@ public class GameBoardGUI extends JFrame {
         // Create Mistake Tracker
         JPanel mistakePanel = new JPanel();
         mistakePanel.setLayout(new BoxLayout(mistakePanel, BoxLayout.X_AXIS));
-        mistakePanel.setPreferredSize(new Dimension(700, 30));
+        mistakePanel.setPreferredSize(new Dimension(700, 40));
         mistakePanel.setAlignmentY(CENTER_ALIGNMENT);
         mistakePanel.setAlignmentX(CENTER_ALIGNMENT);
         mistakePanel.setBackground(Color.WHITE);
         
         JLabel mistakes = new JLabel("Mistakes Remaining: ");
         mistakes.setFont(new Font("Verdana", Font.PLAIN, 15));
+  
+        JLabel life1 = new JLabel(" ⏺");
+        JLabel life2 = new JLabel(" ⏺");
+        JLabel life3 = new JLabel(" ⏺");
+        JLabel life4 = new JLabel(" ⏺");    
 
-        
-        JLabel life1 = new JLabel(" ⬤");
-        JLabel life2 = new JLabel(" ⬤");
-        JLabel life3 = new JLabel(" ⬤");
-        JLabel life4 = new JLabel(" ⬤");    
-
-        life1.setFont(new Font("Verdana", Font.PLAIN, 20));
-        life2.setFont(new Font("Verdana", Font.PLAIN, 20));
-        life3.setFont(new Font("Verdana", Font.PLAIN, 20));
-        life4.setFont(new Font("Verdana", Font.PLAIN, 20));
+        life1.setFont(new Font("Verdana", Font.PLAIN, 42));
+        life2.setFont(new Font("Verdana", Font.PLAIN, 42));
+        life3.setFont(new Font("Verdana", Font.PLAIN, 42));
+        life4.setFont(new Font("Verdana", Font.PLAIN, 42));
 
         life1.setForeground(darkGray);
         life2.setForeground(darkGray);
         life3.setForeground(darkGray);
         life4.setForeground(darkGray);
 
-        // Create Gameplay Buttons
+        // Create Submit Button
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.setPreferredSize(new Dimension(700, 150));
-        buttonPanel.setAlignmentY(CENTER_ALIGNMENT);
+        buttonPanel.setPreferredSize(new Dimension(700, 120));
         buttonPanel.setAlignmentX(CENTER_ALIGNMENT);
         buttonPanel.setBackground(Color.WHITE);
         
@@ -154,14 +157,8 @@ public class GameBoardGUI extends JFrame {
         submit.setBackground(darkGray);
         submit.setOpaque(true);
         submit.setBorderPainted(false);
+        submit.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Return Panel
-        JPanel returnPanel = new JPanel();
-        returnPanel.setLayout(new BoxLayout(returnPanel, BoxLayout.X_AXIS)); 
-        buttonPanel.setPreferredSize(new Dimension(700, 50));
-        returnPanel.setBackground(Color.white);
-        returnPanel.setBorder(BorderFactory.createEmptyBorder(10,0,45,0));
-        
         JButton returnButton = new JButton("Return to Menu");
         returnButton.setFont(new Font("Veranda", Font.PLAIN, 15));
         returnButton.setBackground(purple);
@@ -169,6 +166,7 @@ public class GameBoardGUI extends JFrame {
         returnButton.setBorder(BorderFactory.createLineBorder(purple, 5));
         returnButton.setForeground(Color.white);
         returnButton.addActionListener(backActionListener);
+        returnButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Fill Panels
         this.add(mainPanel);
@@ -176,11 +174,12 @@ public class GameBoardGUI extends JFrame {
         mainPanel.add(gridPanel);
         mainPanel.add(mistakePanel);
         mainPanel.add(buttonPanel);
-        mainPanel.add(returnPanel);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         headingPanel.add(title);
         headingPanel.add(instructions);
+        headingPanel.add(messageLabel);
+
         mistakePanel.add(mistakes);
         mistakePanel.add(life1);
         mistakePanel.add(life2);
@@ -188,8 +187,8 @@ public class GameBoardGUI extends JFrame {
         mistakePanel.add(life4);
 
         buttonPanel.add(submit);
-        buttonPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        returnPanel.add(returnButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        buttonPanel.add(returnButton);
 
         this.pack();
         this.setVisible(true);
@@ -319,10 +318,6 @@ public class GameBoardGUI extends JFrame {
         WordGrid wordGrid = new WordGrid(wordGroups);
         //System.out.println("returning the wordGrid that was made");
         return wordGrid;
-    }
-
-    private void drawDots(Graphics2D g2d, int x, int y) {
-            g2d.fillOval(x, y, 30, 30);
     }
 }
 
