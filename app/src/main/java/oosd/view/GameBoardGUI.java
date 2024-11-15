@@ -38,6 +38,7 @@ public class GameBoardGUI extends JFrame {
     private ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
     private int MAX_SELECTION = 4;
     Game game;
+    WordGrid wordGrid;
       
     public GameBoardGUI(ActionListener backActionListener, GameDifficulty gameDifficulty) {
         game = new Game(gameDifficulty);
@@ -99,6 +100,7 @@ public class GameBoardGUI extends JFrame {
         }
 
         WordGrid gridPanel = makeGrid(buttons);
+        this.wordGrid = gridPanel;
         gridPanel.setPreferredSize(new Dimension(700, 450));
         gridPanel.setLayout(null);
         gridPanel.setBackground(Color.WHITE);
