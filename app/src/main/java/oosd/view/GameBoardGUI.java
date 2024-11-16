@@ -41,6 +41,8 @@ public class GameBoardGUI extends JFrame {
     private int MAX_SELECTION = 4;
     Game game;
     WordGrid wordGrid;
+    JLabel messageLabel;
+    JLabel[] mistakeArray;
       
     public GameBoardGUI(ActionListener backActionListener, GameDifficulty gameDifficulty) {
         game = new Game(gameDifficulty);
@@ -74,6 +76,7 @@ public class GameBoardGUI extends JFrame {
         instructions.setForeground(purple);
 
         JLabel messageLabel = new JLabel();
+        this.messageLabel = messageLabel;
         messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         messageLabel.setFont(new Font("Verdana", Font.BOLD, 15));
         messageLabel.setBorder(BorderFactory.createEmptyBorder(15,0,5,0));
@@ -127,11 +130,19 @@ public class GameBoardGUI extends JFrame {
         
         JLabel mistakes = new JLabel("Mistakes Remaining: ");
         mistakes.setFont(new Font("Verdana", Font.PLAIN, 15));
+
+        JLabel[] mistakeArray = new JLabel[4];
+        this.mistakeArray = mistakeArray;
   
         JLabel life1 = new JLabel(" ⏺");
         JLabel life2 = new JLabel(" ⏺");
         JLabel life3 = new JLabel(" ⏺");
-        JLabel life4 = new JLabel(" ⏺");    
+        JLabel life4 = new JLabel(" ⏺");
+
+        mistakeArray[0] = life1;
+        mistakeArray[1] = life2;
+        mistakeArray[2] = life3;
+        mistakeArray[3] = life4;
 
         life1.setFont(new Font("Verdana", Font.PLAIN, 42));
         life2.setFont(new Font("Verdana", Font.PLAIN, 42));
@@ -192,6 +203,12 @@ public class GameBoardGUI extends JFrame {
 
         this.pack();
         this.setVisible(true);
+
+        /*//for testing, delete later
+        checkGuess();
+        checkGuess();
+        checkGuess();
+        checkGuess();*/
     }
 
     private void handleButtonClick(Word button) {
@@ -318,6 +335,104 @@ public class GameBoardGUI extends JFrame {
         WordGrid wordGrid = new WordGrid(wordGroups);
         //System.out.println("returning the wordGrid that was made");
         return wordGrid;
+    }
+
+    private void disableWordGroup(WordGroup wordGroup) {
+        Word[] wordList = wordGroup.getWordList();
+
+        for (int i = 0; i < wordList.length; i++) {
+            wordList[i].setEnabled(false);
+        }
+    }
+
+    private void checkLoss(int lives) {
+        WordGroup[] wordGroups = wordGrid.getWordGroups();
+        mistakeArray[lives].setVisible(false);
+
+        if (lives == 0) { //for deliverable 3, add word group reveal
+            messageLabel.setText("You lose.");
+            for (int i = 0; i < wordGroups.length; i++) {
+                disableWordGroup(wordGroups[i]);
+            }
+        } else {
+            messageLabel.setText("Incorrect, try again.");
+        }
+    }
+
+    public void checkGuess(WordGroup inputWordGroup) {
+        WordGroup[] wordGroups = wordGrid.getWordGroups();
+        Word[] inputWordList = inputWordGroup.getWordList();
+
+        //Word[] inputWordList = new Word[4]; //for testing only
+        //for (int i = 0; i < 4; i++) { //this for loop is for testing only
+            //Word word = new Word(wordGroups[i].getWordList()[i].getText()); //Test case 1/4 correct
+            /*Word word = new Word(wordGroups[0].getWordList()[i].getText()); //Test case 3/4 correct
+            if (i == 3) {
+                word.updateText(wordGroups[1].getWordList()[i].getText());
+            }*/
+            /*Word word = new Word(wordGroups[0].getWordList()[i].getText()); //Test case 4/4 correct. 
+            Seemingly doesn't disable all buttons, 
+            but in practice the same guess won't ble able to be made multiple times*/
+            //inputWordList[i] = word;
+        //}
+        //WordGroup inputWordGroup = new WordGroup(inputWordList, WordDifficulty.BLUE); //for testing only
+
+        int matchCount = 0;
+        int bestMatchCount = 0;
+        
+        for (int i = 0; i < wordGroups.length; i++) {
+            Word[] gridWordList = wordGroups[i].getWordList();
+            matchCount = 0;
+
+            for (int j = 0; j < gridWordList.length; j++) {
+                Word gridWord = gridWordList[j];
+                //System.out.println(gridWord.getText());
+                
+                for (int k = 0; k < inputWordList.length; k++) {
+                    if (inputWordList[k].getText().equals(gridWord.getText())) {
+                        System.out.println("Determined that " + inputWordList[k].getText() + " is equal to " + gridWord.getText());
+                        matchCount++;
+                        
+                        if (matchCount > bestMatchCount) {
+                            bestMatchCount = matchCount;
+                        }
+                        System.out.println("Increased bestMatchCount to " + bestMatchCount + " at row " + j + " colunm " + i);
+                        if (matchCount == 4) {
+                            inputWordGroup = wordGroups[i];
+                        }
+                    } else {
+                        //System.out.println(inputWordList[k].getText() + " is not equal to " + gridWord.getText());
+                    }
+                }
+            }
+        }
+        System.out.println(bestMatchCount);
+
+        switch(bestMatchCount) {
+            case 0:
+            case 1:
+            case 2:
+                wordGrid.decrementLives();
+                checkLoss(wordGrid.getLives());
+                break;
+            case 3:
+                wordGrid.decrementLives();
+                if (wordGrid.getLives() != 0) {
+                    messageLabel.setText("One word off.");
+                } else {
+                    checkLoss(wordGrid.getLives());
+                }
+                break;
+            case 4:
+                wordGrid.decrementGroupsRemaining();
+                disableWordGroup(inputWordGroup);
+                if (wordGrid.getGroupsRemaining() == 0) {
+                    messageLabel.setText("You win!");
+                } else {
+                    messageLabel.setText("Correct!");
+                }
+                break;
+        }
     }
 }
 
