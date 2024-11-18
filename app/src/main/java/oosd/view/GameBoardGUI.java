@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import oosd.controller.Controller;
 import oosd.model.Game;
 import oosd.model.GameDifficulty;
 import oosd.model.WordDifficulty;
@@ -33,6 +34,7 @@ import oosd.model.WordDifficulty;
 
 public class GameBoardGUI extends JFrame {
 
+    private Controller controller;
     private Color purple = new Color(187, 129, 197);
     private Color lightGray = new Color(239, 239, 230);
     private Color darkGray = new Color(90, 89, 78);
@@ -43,7 +45,13 @@ public class GameBoardGUI extends JFrame {
     WordGrid wordGrid;
     JLabel messageLabel;
     JLabel[] mistakeArray;
-      
+
+    public void setController(Controller controller) { // Setter for the Controller
+        this.controller = controller;
+        System.out.println("Controller has been set: " + controller);
+
+    }
+
     public GameBoardGUI(ActionListener backActionListener, GameDifficulty gameDifficulty) {
         game = new Game(gameDifficulty);
         // Create mainFrame
@@ -170,6 +178,14 @@ public class GameBoardGUI extends JFrame {
         submit.setBorderPainted(false);
         submit.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        submit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleSubmit();
+            }
+        });
+        
+
         JButton returnButton = new JButton("Return to Menu");
         returnButton.setFont(new Font("Veranda", Font.PLAIN, 15));
         returnButton.setBackground(purple);
@@ -211,16 +227,20 @@ public class GameBoardGUI extends JFrame {
         checkGuess();*/
     }
 
-    private void handleButtonClick(Word button) {
+    public void handleButtonClick(Word button) {
         if (selectedButtons.contains(button)) {
+            // Unselect the word
             button.setBackground(lightGray);
             button.setForeground(Color.BLACK);
             selectedButtons.remove(button);
         } else {
             if (selectedButtons.size() < MAX_SELECTION) {
+                // Select the word
                 button.setBackground(darkGray);
                 button.setForeground(Color.WHITE);
                 selectedButtons.add(button);
+            } else {
+                messageLabel.setText("You can only select up to 4 words.");
             }
         }
     }
@@ -396,7 +416,7 @@ public class GameBoardGUI extends JFrame {
                         if (matchCount > bestMatchCount) {
                             bestMatchCount = matchCount;
                         }
-                        System.out.println("Increased bestMatchCount to " + bestMatchCount + " at row " + j + " colunm " + i);
+                        System.out.println("Increased bestMatchCount to " + bestMatchCount + " at row " + j + " column " + i);
                         if (matchCount == 4) {
                             inputWordGroup = wordGroups[i];
                         }
@@ -416,7 +436,7 @@ public class GameBoardGUI extends JFrame {
                 checkLoss(wordGrid.getLives());
                 break;
             case 3:
-                wordGrid.decrementLives();
+                // wordGrid.decrementLives();
                 if (wordGrid.getLives() != 0) {
                     messageLabel.setText("One word off.");
                 } else {
@@ -434,5 +454,57 @@ public class GameBoardGUI extends JFrame {
                 break;
         }
     }
-}
 
+    public void handleSubmit() {
+        // Check if no words are selected
+        if (selectedButtons.isEmpty()) {
+            messageLabel.setText("Please select words before submitting.");
+            System.out.println("Submit clicked without selecting any words.");
+            return;
+        }
+    
+        // Check if fewer or more than 4 words are selected
+        if (selectedButtons.size() != 4) {
+            messageLabel.setText("You must select exactly 4 words.");
+            System.out.println("Submit clicked with " + selectedButtons.size() + " words selected.");
+            return;
+        }
+    
+        try {
+            // Create a new WordGroup for the guess
+            Word[] words = new Word[selectedButtons.size()];
+            for (int i = 0; i < selectedButtons.size(); i++) {
+                JButton button = selectedButtons.get(i);
+                words[i] = new Word(button.getText());
+            }
+    
+            WordGroup guess = new WordGroup(words, null);
+            System.out.println("Submitting guess: " + guess);
+    
+            // Clear selection and reset button colors
+            for (JButton button : selectedButtons) {
+                button.setBackground(lightGray);
+                button.setForeground(Color.BLACK);
+            }
+            selectedButtons.clear();
+    
+            // Check for duplicate guesses
+            if (wordGrid.getAlreadyGuessed().contains(guess)) {
+                messageLabel.setText("You've already made this guess!");
+                System.out.println("Duplicate guess detected: " + guess);
+                return; // Stop further processing if it's a duplicate
+            }
+    
+            // Add the guess to already guessed groups
+            wordGrid.addGuess(guess);
+            System.out.println("Already guessed groups: " + wordGrid.getAlreadyGuessed());
+    
+            // Check the guess for correctness
+            checkGuess(guess);
+    
+        } catch (Exception e) {
+            messageLabel.setText("Error handling your guess. Please try again.");
+            e.printStackTrace();
+        }
+    }
+}    

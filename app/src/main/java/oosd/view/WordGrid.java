@@ -11,6 +11,7 @@ public class WordGrid extends JPanel {
     private int groupsRemaining;
     private int lives;
     
+    
     public WordGrid(WordGroup[] wordGroups) {
 
         this.wordGroups = wordGroups;
