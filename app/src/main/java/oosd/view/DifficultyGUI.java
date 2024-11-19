@@ -1,57 +1,29 @@
 package oosd.view;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-import oosd.model.GameDifficulty;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 
 public class DifficultyGUI extends JFrame {
     
     private DifficultyGUI difficulty;
     private GameBoardGUI game;
+    private JButton returnButton;
+    private JButton easy;
+    private JButton medium;
+    private JButton hard;
        
-    public DifficultyGUI(BackListener backListener) {
-        // color codes
-        Color purple = new Color(187, 129, 197);
-        Color blue = new Color(176, 196, 239);
-        Color yellow = new Color(249, 223, 109);
-        Color green = new Color(160, 195, 90);
+    public DifficultyGUI() {
 
         difficulty = this;
-
-        // define action listeners
-        ActionListener easyListener = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                difficulty.setVisible(false);
-                BackListener back = new BackListener();
-                game = new GameBoardGUI(back, GameDifficulty.EASY);
-                back.setNewFrame(backListener.getNewFrame());
-                back.setOldFrame(game);
-            }
-        };
-
-        ActionListener mediumListener = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                difficulty.setVisible(false);
-                BackListener back = new BackListener();
-                game = new GameBoardGUI(back, GameDifficulty.MEDIUM);
-                back.setNewFrame(backListener.getNewFrame());
-                back.setOldFrame(game);
-                
-            }
-        };
-
-        ActionListener hardListener = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                difficulty.setVisible(false);
-                BackListener back = new BackListener();
-                game = new GameBoardGUI(back, GameDifficulty.HARD);
-                back.setNewFrame(backListener.getNewFrame());
-                back.setOldFrame(game);
-            }
-        };
 
         // Create mainFrame
         this.setTitle("Connections");
@@ -62,14 +34,14 @@ public class DifficultyGUI extends JFrame {
         // Create mainPanel
         JPanel mainPanel = new JPanel();
         mainPanel.setPreferredSize(new Dimension(700, 800));
-        mainPanel.setBackground(Color.white);
+        mainPanel.setBackground(ColorCodes.white);
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createLineBorder(purple, 20));
+        mainPanel.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 20));
 
         // Create Title & Heading
         JPanel headingPanel = new JPanel();
         headingPanel.setBounds(0,0,700,200);
-        headingPanel.setBackground(Color.white);
+        headingPanel.setBackground(ColorCodes.white);
         headingPanel.setLayout(new BoxLayout(headingPanel, BoxLayout.Y_AXIS));
 
         JLabel title = new JLabel("Connections");
@@ -83,50 +55,46 @@ public class DifficultyGUI extends JFrame {
         choose.setAlignmentX(Component.CENTER_ALIGNMENT);
         choose.setAlignmentY(Component.CENTER_ALIGNMENT);
         choose.setFont(new Font("Verdana", Font.BOLD, 20));
-        choose.setForeground(purple);
+        choose.setForeground(ColorCodes.purple);
         
         // Create Buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBounds(0,200,700,500);
         buttonPanel.setLayout(null);
-        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setBackground(ColorCodes.white);
         
-        JButton easy = new JButton("Easy");
+        easy = new JButton("Easy");
         easy.setFont(new Font("Verdana", Font.PLAIN, 30));
         easy.setBounds(175,50,300,100);
-        easy.setBackground(yellow);
+        easy.setBackground(ColorCodes.yellow);
         easy.setOpaque(true);
         easy.setBorderPainted(false);
-        easy.addActionListener(easyListener);
 
-        JButton medium = new JButton("Medium");
+        medium = new JButton("Medium");
         medium.setFont(new Font("Verdana", Font.PLAIN, 30));
         medium.setBounds(175,200,300,100);
-        medium.setBackground(green);
+        medium.setBackground(ColorCodes.green);
         medium.setOpaque(true);
         medium.setBorderPainted(false);
-        medium.addActionListener(mediumListener);
 
-        JButton hard = new JButton("Hard");
+        hard = new JButton("Hard");
         hard.setFont(new Font("Verdana", Font.PLAIN, 30));
         hard.setBounds(175,350,300,100);
-        hard.setBackground(blue);
+        hard.setBackground(ColorCodes.blue);
         hard.setOpaque(true);
         hard.setBorderPainted(false);
-        hard.addActionListener(hardListener);
 
         // Return Panel
         JPanel returnPanel = new JPanel();
         returnPanel.setLayout(new BoxLayout(returnPanel, BoxLayout.X_AXIS)); 
-        returnPanel.setBackground(Color.white);
+        returnPanel.setBackground(ColorCodes.white);
         
-        JButton returnButton = new JButton("Return to Menu");
+        returnButton = new JButton("Return to Menu");
         returnButton.setFont(new Font("Veranda", Font.PLAIN, 15));
-        returnButton.setBackground(purple);
+        returnButton.setBackground(ColorCodes.purple);
         returnButton.setOpaque(true);
-        returnButton.setBorder(BorderFactory.createLineBorder(purple, 5));
-        returnButton.setForeground(Color.white);
-        returnButton.addActionListener(backListener);
+        returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 5));
+        returnButton.setForeground(ColorCodes.white);
 
         // Fill Panels
         this.add(mainPanel);
@@ -145,5 +113,23 @@ public class DifficultyGUI extends JFrame {
         this.pack();
         this.setVisible(true);
     }
+
+    
+    public JButton getEasyBut() {
+        return easy;
+    }
+    
+    public JButton getMediumBut() {
+        return medium;
+    }
+
+    public JButton getHardBut() {
+        return hard;
+    }
+
+    public JButton getReturnBut() {
+        return returnButton;
+    }
+    
 }
 

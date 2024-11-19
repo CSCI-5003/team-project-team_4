@@ -1,11 +1,8 @@
 package oosd.view;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -19,33 +16,29 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import oosd.model.Game;
 import oosd.model.GameDifficulty;
 import oosd.model.WordDifficulty;
-//import oosd.model.WordGroup;
-
-//import oosd.model.Game;
-
-// - FR3: when buttons are clicked, they are highlighted (change color). Only four buttons can be highlighted. Add the selected buttons to an ArrayList. 
-//When un-selected, the color goes back to lightGray and word is removed from ArrayList
 
 public class GameBoardGUI extends JFrame {
 
-    private Color purple = new Color(187, 129, 197);
-    private Color lightGray = new Color(239, 239, 230);
-    private Color darkGray = new Color(90, 89, 78);
-
     private ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
     private int MAX_SELECTION = 4;
+    private JButton returnButton;
+    private JButton submit;
     Game game;
     WordGrid wordGrid;
     JLabel messageLabel;
     JLabel[] mistakeArray;
       
-    public GameBoardGUI(ActionListener backActionListener, GameDifficulty gameDifficulty) {
+    public GameBoardGUI(GameDifficulty gameDifficulty) {
+        
+        System.out.println(gameDifficulty);
         game = new Game(gameDifficulty);
+        
         // Create mainFrame
         this.setTitle("Connections");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,14 +48,14 @@ public class GameBoardGUI extends JFrame {
         // Create mainPanel
         JPanel mainPanel = new JPanel();
         mainPanel.setPreferredSize(new Dimension(700, 800));
-        mainPanel.setBackground(Color.white);
+        mainPanel.setBackground(ColorCodes.white);
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createLineBorder(purple, 20));
+        mainPanel.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 20));
         
         // Create Title & Heading
         JPanel headingPanel = new JPanel();
         headingPanel.setPreferredSize(new Dimension(700, 130));
-        headingPanel.setBackground(Color.WHITE);
+        headingPanel.setBackground(ColorCodes.white);
         headingPanel.setLayout(new BoxLayout(headingPanel, BoxLayout.Y_AXIS));
 
         JLabel title = new JLabel("Connections");
@@ -73,14 +66,14 @@ public class GameBoardGUI extends JFrame {
         JLabel instructions = new JLabel("Create Groups of Four!");
         instructions.setAlignmentX(Component.CENTER_ALIGNMENT);
         instructions.setFont(new Font("Verdana", Font.BOLD, 20));
-        instructions.setForeground(purple);
+        instructions.setForeground(ColorCodes.purple);
 
         JLabel messageLabel = new JLabel();
         this.messageLabel = messageLabel;
         messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         messageLabel.setFont(new Font("Verdana", Font.BOLD, 15));
         messageLabel.setBorder(BorderFactory.createEmptyBorder(15,0,5,0));
-        messageLabel.setForeground(darkGray);
+        messageLabel.setForeground(ColorCodes.darkGray);
         messageLabel.setText("Message to User");
 
         // Create Word Grid
@@ -98,7 +91,7 @@ public class GameBoardGUI extends JFrame {
             buttons[i].setBounds(x[i], y[i], width, height);
             buttons[i].setOpaque(true);
             buttons[i].setBorderPainted(false);
-            buttons[i].setBackground(lightGray);
+            buttons[i].setBackground(ColorCodes.lightGray);
 
             buttons[i].addActionListener(new ActionListener() {
                 @Override
@@ -111,22 +104,111 @@ public class GameBoardGUI extends JFrame {
         WordGrid gridPanel = makeGrid(buttons);
         gridPanel.setPreferredSize(new Dimension(700, 415));
         gridPanel.setLayout(null);
-        gridPanel.setBackground(Color.WHITE);  
+        gridPanel.setBackground(ColorCodes.white);  
         
-
         for (int i = 0; i < 16; i++) {
             gridPanel.add(buttons[i]);
         }
 
         this.wordGrid = gridPanel;
 
+        // Create Result Bars
+        // Result One
+        JPanel result1 = new JPanel();
+        result1.setBackground(ColorCodes.yellow);
+        result1.setBounds(55,25,550,95);
+        result1.setLayout(new BoxLayout(result1, BoxLayout.Y_AXIS));
+        result1.setVisible(false);
+
+        JLabel category1 = new JLabel();
+        category1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        category1.setText("FOOD-RELATED JUMBLES");
+        category1.setFont(new Font("Veranda", Font.BOLD, 20));
+        
+        JLabel words1 = new JLabel();
+        words1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        words1.setText("HASH, SALAD, SCRAMBLE, STEW");
+        words1.setFont(new Font("Veranda", Font.PLAIN, 15));
+
+        result1.add(Box.createRigidArea(new Dimension(0, 20)));
+        result1.add(category1);
+        result1.add(Box.createRigidArea(new Dimension(0, 10)));
+        result1.add(words1);
+
+        // Result Two
+        JPanel result2 = new JPanel();
+        result2.setBackground(ColorCodes.green);
+        result2.setBounds(55,130,550,95);
+        result2.setLayout(new BoxLayout(result2, BoxLayout.Y_AXIS));
+        result2.setVisible(false);
+
+        JLabel category2 = new JLabel();
+        category2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        category2.setText("PUBLIC STANDING");
+        category2.setFont(new Font("Veranda", Font.BOLD, 20));
+        
+        JLabel words2 = new JLabel();
+        words2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        words2.setText("CHARACTER, IMAGE, NAME, REPUTATION");
+        words2.setFont(new Font("Veranda", Font.PLAIN, 15));
+
+        result2.add(Box.createRigidArea(new Dimension(0, 20)));
+        result2.add(category2);
+        result2.add(Box.createRigidArea(new Dimension(0, 10)));
+        result2.add(words2);
+
+        // Result Three
+        JPanel result3 = new JPanel();
+        result3.setBackground(ColorCodes.blue);
+        result3.setBounds(55,235,550,95);
+        result3.setLayout(new BoxLayout(result3, BoxLayout.Y_AXIS));
+        result3.setVisible(false);
+
+        JLabel category3 = new JLabel();
+        category3.setAlignmentX(Component.CENTER_ALIGNMENT);
+        category3.setText("INFO ON A MUSEUM PLACARD");
+        category3.setFont(new Font("Veranda", Font.BOLD, 20));
+        
+        JLabel words3 = new JLabel();
+        words3.setAlignmentX(Component.CENTER_ALIGNMENT);
+        words3.setText("ARTIST, MEDIUM, TITLE, YEAR");
+        words3.setFont(new Font("Veranda", Font.PLAIN, 15));
+
+        result3.add(Box.createRigidArea(new Dimension(0, 20)));
+        result3.add(category3);
+        result3.add(Box.createRigidArea(new Dimension(0, 10)));
+        result3.add(words3);
+
+        // Result 4
+        JPanel result4 = new JPanel();
+        result4.setBackground(ColorCodes.purple);
+        result4.setBounds(55,340,550,95);
+        result4.setLayout(new BoxLayout(result4, BoxLayout.Y_AXIS));
+        result4.setVisible(false);
+
+        JLabel category4 = new JLabel();
+        category4.setAlignmentX(Component.CENTER_ALIGNMENT);
+        category4.setText("ANAGRAMS OF FAMOUS PAINTERS");
+        category4.setFont(new Font("Veranda", Font.BOLD, 20));
+        
+        JLabel words4 = new JLabel();
+        words4.setAlignmentX(Component.CENTER_ALIGNMENT);
+        words4.setText("DIAL, EGADS, MONTE, YOGA");
+        words4.setFont(new Font("Veranda", Font.PLAIN, 15));
+
+        result4.add(Box.createRigidArea(new Dimension(0, 20)));
+        result4.add(category4);
+        result4.add(Box.createRigidArea(new Dimension(0, 10)));
+        result4.add(words4);
+
+    
         // Create Mistake Tracker
         JPanel mistakePanel = new JPanel();
         mistakePanel.setLayout(new BoxLayout(mistakePanel, BoxLayout.X_AXIS));
         mistakePanel.setPreferredSize(new Dimension(700, 40));
         mistakePanel.setAlignmentY(CENTER_ALIGNMENT);
         mistakePanel.setAlignmentX(CENTER_ALIGNMENT);
-        mistakePanel.setBackground(Color.WHITE);
+        mistakePanel.setBackground(ColorCodes.white);
         
         JLabel mistakes = new JLabel("Mistakes Remaining: ");
         mistakes.setFont(new Font("Verdana", Font.PLAIN, 15));
@@ -149,47 +231,51 @@ public class GameBoardGUI extends JFrame {
         life3.setFont(new Font("Verdana", Font.PLAIN, 42));
         life4.setFont(new Font("Verdana", Font.PLAIN, 42));
 
-        life1.setForeground(darkGray);
-        life2.setForeground(darkGray);
-        life3.setForeground(darkGray);
-        life4.setForeground(darkGray);
+        life1.setForeground(ColorCodes.darkGray);
+        life2.setForeground(ColorCodes.darkGray);
+        life3.setForeground(ColorCodes.darkGray);
+        life4.setForeground(ColorCodes.darkGray);
 
-        // Create Submit Button
+        // Create Submit & Return Buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setPreferredSize(new Dimension(700, 120));
         buttonPanel.setAlignmentX(CENTER_ALIGNMENT);
-        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setBackground(ColorCodes.white);
         
-        JButton submit = new JButton("Submit Guess");
+        submit = new JButton("Submit Guess");
         submit.setFont(new Font("Verdana", Font.PLAIN, 15));
         submit.setPreferredSize(new Dimension(20,50));
-        submit.setForeground(Color.WHITE);
-        submit.setBackground(darkGray);
+        submit.setForeground(ColorCodes.white);
+        submit.setBackground(ColorCodes.darkGray);
         submit.setOpaque(true);
         submit.setBorderPainted(false);
         submit.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton returnButton = new JButton("Return to Menu");
+        returnButton = new JButton("Return to Menu");
         returnButton.setFont(new Font("Veranda", Font.PLAIN, 15));
-        returnButton.setBackground(purple);
+        returnButton.setBackground(ColorCodes.purple);
         returnButton.setOpaque(true);
-        returnButton.setBorder(BorderFactory.createLineBorder(purple, 5));
-        returnButton.setForeground(Color.white);
-        returnButton.addActionListener(backActionListener);
+        returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 5));
+        returnButton.setForeground(ColorCodes.white);
         returnButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Fill Panels
         this.add(mainPanel);
-        mainPanel.add(headingPanel);
-        mainPanel.add(gridPanel);
-        mainPanel.add(mistakePanel);
-        mainPanel.add(buttonPanel);
+        mainPanel.add(headingPanel, JLayeredPane.DEFAULT_LAYER);
+        mainPanel.add(gridPanel, JLayeredPane.DEFAULT_LAYER);
+        mainPanel.add(mistakePanel, JLayeredPane.DEFAULT_LAYER);
+        mainPanel.add(buttonPanel, JLayeredPane.DEFAULT_LAYER);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         headingPanel.add(title);
         headingPanel.add(instructions);
         headingPanel.add(messageLabel);
+
+        gridPanel.add(result1, JLayeredPane.MODAL_LAYER);
+        gridPanel.add(result2, JLayeredPane.MODAL_LAYER);
+        gridPanel.add(result3, JLayeredPane.MODAL_LAYER);
+        gridPanel.add(result4, JLayeredPane.MODAL_LAYER);
 
         mistakePanel.add(mistakes);
         mistakePanel.add(life1);
@@ -213,13 +299,13 @@ public class GameBoardGUI extends JFrame {
 
     private void handleButtonClick(Word button) {
         if (selectedButtons.contains(button)) {
-            button.setBackground(lightGray);
-            button.setForeground(Color.BLACK);
+            button.setBackground(ColorCodes.lightGray);
+            button.setForeground(ColorCodes.black);
             selectedButtons.remove(button);
         } else {
             if (selectedButtons.size() < MAX_SELECTION) {
-                button.setBackground(darkGray);
-                button.setForeground(Color.WHITE);
+                button.setBackground(ColorCodes.darkGray);
+                button.setForeground(ColorCodes.white);
                 selectedButtons.add(button);
             }
         }
@@ -433,6 +519,14 @@ public class GameBoardGUI extends JFrame {
                 }
                 break;
         }
+    }
+
+    public JButton getSubmitBut() {
+        return submit;
+    }
+
+    public JButton getReturnBut() {
+        return returnButton;
     }
 }
 

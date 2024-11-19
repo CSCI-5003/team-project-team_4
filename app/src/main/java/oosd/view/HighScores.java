@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -17,10 +16,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 public class HighScores extends JFrame{
+    
+    private JButton returnButton;
 
-    public HighScores(ActionListener backActionListener) {
-        // color codes
-        Color purple = new Color(187, 129, 197);
+    public HighScores() {
 
         // Create scoreFrame
         this.setTitle("Connections");
@@ -33,7 +32,7 @@ public class HighScores extends JFrame{
         mainPanel.setPreferredSize(new Dimension(700, 800));
         mainPanel.setBackground(Color.white);
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createLineBorder(purple, 20));
+        mainPanel.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 20));
 
         // Create Title & Heading
         JPanel headingPanel = new JPanel();
@@ -52,7 +51,7 @@ public class HighScores extends JFrame{
         highScore.setAlignmentX(Component.CENTER_ALIGNMENT);
         highScore.setAlignmentY(Component.CENTER_ALIGNMENT);
         highScore.setFont(new Font("Verdana", Font.BOLD, 20));
-        highScore.setForeground(purple);
+        highScore.setForeground(ColorCodes.purple);
 
         // Score Panel
         JPanel scorePanel = new JPanel();
@@ -76,13 +75,12 @@ public class HighScores extends JFrame{
         returnPanel.setLayout(new BoxLayout(returnPanel, BoxLayout.X_AXIS)); 
         returnPanel.setBackground(Color.white);
         
-        JButton returnButton = new JButton("Return to Menu");
+        returnButton = new JButton("Return to Menu");
         returnButton.setFont(new Font("Veranda", Font.PLAIN, 15));
-        returnButton.setBackground(purple);
+        returnButton.setBackground(ColorCodes.purple);
         returnButton.setOpaque(true);
-        returnButton.setBorder(BorderFactory.createLineBorder(purple, 5));
+        returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 5));
         returnButton.setForeground(Color.white);
-        returnButton.addActionListener(backActionListener);
 
         // Fill Panels
         this.add(mainPanel);
@@ -99,5 +97,9 @@ public class HighScores extends JFrame{
 
         this.pack();
         this.setVisible(true);
+    }
+
+    public JButton getReturnBut() {
+        return returnButton;
     }
 }

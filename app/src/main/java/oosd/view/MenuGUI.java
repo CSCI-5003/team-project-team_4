@@ -1,18 +1,23 @@
 package oosd.view;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 
-import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class MenuGUI extends JFrame {
+
+    private JButton playNowBut;
+    private JButton highScoresBut;
+    private JButton howToBut;
        
-    public MenuGUI(ActionListener playListener, ActionListener scoreListener, ActionListener howToListener) {
-        // color codes
-        Color purple = new Color(187, 129, 197);
-        Color blue = new Color(176, 196, 239);
-        Color yellow = new Color(249, 223, 109);
-        Color green = new Color(160, 195, 90);
+    public MenuGUI() {
 
         // Create menuFrame
         this.setTitle("Connections");
@@ -23,14 +28,14 @@ public class MenuGUI extends JFrame {
         // Create mainPanel
         JPanel mainPanel = new JPanel();
         mainPanel.setPreferredSize(new Dimension(700, 800));
-        mainPanel.setBackground(Color.white);
+        mainPanel.setBackground(ColorCodes.white);
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createLineBorder(purple, 20));
+        mainPanel.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 20));
 
         // Create Title & Heading
         JPanel headingPanel = new JPanel();
         headingPanel.setBounds(0,0,700,200);
-        headingPanel.setBackground(Color.white);
+        headingPanel.setBackground(ColorCodes.white);
         headingPanel.setLayout(new BoxLayout(headingPanel, BoxLayout.Y_AXIS));
 
         JLabel title = new JLabel("Connections");
@@ -43,31 +48,28 @@ public class MenuGUI extends JFrame {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBounds(0,200,700,200);
         buttonPanel.setLayout(null);
-        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setBackground(ColorCodes.white);
         
-        JButton playNowBut = new JButton("Play Now");
+        playNowBut = new JButton("Play Now");
         playNowBut.setFont(new Font("Verdana", Font.PLAIN, 30));
         playNowBut.setBounds(175,100,300,100);
-        playNowBut.setBackground(yellow);
+        playNowBut.setBackground(ColorCodes.yellow);
         playNowBut.setOpaque(true);
         playNowBut.setBorderPainted(false);
-        playNowBut.addActionListener(playListener);
 
-        JButton highScoresBut = new JButton("High Scores");
+        highScoresBut = new JButton("High Scores");
         highScoresBut.setFont(new Font("Verdana", Font.PLAIN, 30));
         highScoresBut.setBounds(175,250,300,100);
-        highScoresBut.setBackground(green);
+        highScoresBut.setBackground(ColorCodes.green);
         highScoresBut.setOpaque(true);
         highScoresBut.setBorderPainted(false);
-        highScoresBut.addActionListener(scoreListener);
 
-        JButton howToBut = new JButton("How To Play");
+        howToBut = new JButton("How To Play");
         howToBut.setFont(new Font("Verdana", Font.PLAIN, 30));
         howToBut.setBounds(175,400,300,100);
-        howToBut.setBackground(blue);
+        howToBut.setBackground(ColorCodes.blue);
         howToBut.setOpaque(true);
         howToBut.setBorderPainted(false);
-        howToBut.addActionListener(howToListener);
 
         // Fill Panels
         this.add(mainPanel);
@@ -82,4 +84,18 @@ public class MenuGUI extends JFrame {
         this.pack();
         this.setVisible(true);
     }
+
+    public JButton getPlayNowBut() {
+        return playNowBut;
+    }
+
+    public JButton gethighScoresBut() {
+        return highScoresBut;
+    }
+
+    public JButton getHowToBut() {
+        return howToBut;
+    }
+
 }
+

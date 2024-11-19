@@ -1,9 +1,5 @@
 package oosd.view;
 
-//import java.awt.*;
-//import javax.swing.*;
-
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -11,36 +7,35 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class EndGame extends JFrame{
+    
+    private JButton returnButton;
+
     public EndGame() {
-        // color codes
-        Color lightPurple = new Color(178, 169, 249);
-        Color purple = new Color(187, 129, 197);
-        Color blue = new Color(176, 196, 239);
-        Color yellow = new Color(249, 223, 109);
-        Color green = new Color(160, 195, 90);
 
         // Create menuFrame
-        this.setTitle("Connections");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setPreferredSize(new Dimension(700, 800));
-        this.setResizable(false);
+        JFrame frame = new JFrame();
+        frame.setTitle("Connections");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(700, 800));
+        frame.setResizable(false);
 
         // Create mainPanel
         JPanel mainPanel = new JPanel();
         mainPanel.setPreferredSize(new Dimension(700, 800));
-        mainPanel.setBackground(Color.white);
+        mainPanel.setBackground(ColorCodes.white);
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createLineBorder(purple, 20));
+        mainPanel.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 20));
 
         // Create Title & Heading
         JPanel headingPanel = new JPanel();
         headingPanel.setPreferredSize(new Dimension(700, 100));
-        headingPanel.setBackground(Color.white);
+        headingPanel.setBackground(ColorCodes.white);
         headingPanel.setLayout(new BoxLayout(headingPanel, BoxLayout.Y_AXIS));
 
         JLabel title = new JLabel("Connections");
@@ -51,13 +46,13 @@ public class EndGame extends JFrame{
 
         // Score Panel
         JPanel resultPanel = new JPanel();
-        resultPanel.setPreferredSize(new Dimension(700, 225));
-        resultPanel.setBackground(Color.WHITE);
+        resultPanel.setPreferredSize(new Dimension(700, 200));
+        resultPanel.setBackground(ColorCodes.white);
         resultPanel.setLayout(null);
         
         JPanel scorePanel = new JPanel();
-        scorePanel.setBounds(80,0,500,200);
-        scorePanel.setBackground(lightPurple);
+        scorePanel.setBounds(80,0,500,175);
+        scorePanel.setBackground(ColorCodes.lightPurple);
         scorePanel.setLayout(new BoxLayout(scorePanel, BoxLayout.Y_AXIS));
 
         JLabel result = new JLabel();
@@ -65,13 +60,13 @@ public class EndGame extends JFrame{
         result.setText("Better Luck Next Time!");
         result.setAlignmentX(CENTER_ALIGNMENT);
         result.setFont(new Font("Veranda", Font.BOLD, 35));
-        result.setBorder(BorderFactory.createEmptyBorder(30,5,5,5));
+        result.setBorder(BorderFactory.createEmptyBorder(25,5,5,5));
 
         JLabel yourScore = new JLabel();
         yourScore.setText("Your Score:");
         yourScore.setAlignmentX(CENTER_ALIGNMENT);
         yourScore.setFont(new Font("Veranda", Font.BOLD, 20));
-        yourScore.setBorder(BorderFactory.createEmptyBorder(30,5,0,5));
+        yourScore.setBorder(BorderFactory.createEmptyBorder(15,5,0,5));
 
         JLabel score = new JLabel();
         score.setText("46");
@@ -81,16 +76,16 @@ public class EndGame extends JFrame{
 
         // Answer Panel
         JPanel answerPanel = new JPanel();
-        answerPanel.setPreferredSize(new Dimension(700, 400));
+        answerPanel.setPreferredSize(new Dimension(700, 345));
         answerPanel.setLayout(new BoxLayout(answerPanel, BoxLayout.Y_AXIS));
         answerPanel.setAlignmentX(CENTER_ALIGNMENT);
         answerPanel.setAlignmentY(CENTER_ALIGNMENT);
         answerPanel.setLayout(null);
-        answerPanel.setBackground(Color.WHITE);
+        answerPanel.setBackground(ColorCodes.white);
 
         // Yellow
         JPanel yellowPanel = new JPanel();
-        yellowPanel.setBackground(yellow);
+        yellowPanel.setBackground(ColorCodes.yellow);
         yellowPanel.setBounds(175,0,300,75);
         yellowPanel.setLayout(new BoxLayout(yellowPanel, BoxLayout.Y_AXIS));
         
@@ -112,8 +107,8 @@ public class EndGame extends JFrame{
 
         // Green
         JPanel greenPanel = new JPanel();
-        greenPanel.setBackground(green);
-        greenPanel.setBounds(175,100,300,75);
+        greenPanel.setBackground(ColorCodes.green);
+        greenPanel.setBounds(175,90,300,75);
         greenPanel.setLayout(new BoxLayout(greenPanel, BoxLayout.Y_AXIS));
 
         JLabel greenCategory = new JLabel();
@@ -133,8 +128,8 @@ public class EndGame extends JFrame{
 
         // Blue
         JPanel bluePanel = new JPanel();
-        bluePanel.setBackground(blue);
-        bluePanel.setBounds(175,200,300,75);
+        bluePanel.setBackground(ColorCodes.blue);
+        bluePanel.setBounds(175,180,300,75);
         bluePanel.setLayout(new BoxLayout(bluePanel, BoxLayout.Y_AXIS));
 
         JLabel blueCategory = new JLabel();
@@ -154,8 +149,8 @@ public class EndGame extends JFrame{
 
         // Purple
         JPanel purplePanel = new JPanel();
-        purplePanel.setBackground(purple);
-        purplePanel.setBounds(175,300,300,75);
+        purplePanel.setBackground(ColorCodes.purple);
+        purplePanel.setBounds(175,270,300,75);
         purplePanel.setLayout(new BoxLayout(purplePanel, BoxLayout.Y_AXIS));
 
         JLabel purpleCategory = new JLabel();
@@ -173,22 +168,31 @@ public class EndGame extends JFrame{
         purplePanel.add(Box.createRigidArea(new Dimension(0, 10)));
         purplePanel.add(purpleWords);
 
-
+        // Return Panel
+        JPanel returnPanel = new JPanel();
+        returnPanel.setLayout(new BoxLayout(returnPanel, BoxLayout.X_AXIS)); 
+        returnPanel.setBackground(ColorCodes.white);
+        returnPanel.setPreferredSize(new Dimension(700, 75));
+        
+        returnButton = new JButton("Return to Menu");
+        returnButton.setFont(new Font("Veranda", Font.PLAIN, 15));
+        returnButton.setBackground(ColorCodes.darkGray);
+        returnButton.setOpaque(true);
+        returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.darkGray, 5));
+        returnButton.setForeground(ColorCodes.lightGray);
 
         answerPanel.add(yellowPanel);
-        answerPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         answerPanel.add(greenPanel);
-        answerPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         answerPanel.add(bluePanel);
-        answerPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         answerPanel.add(purplePanel);
-
+        answerPanel.add(returnButton);
 
         // Fill Panels
-        this.add(mainPanel);
+        frame.add(mainPanel);
         mainPanel.add(headingPanel);
         mainPanel.add(resultPanel);
         mainPanel.add(answerPanel);
+        mainPanel.add(returnPanel);
 
         headingPanel.add(title);
 
@@ -197,8 +201,13 @@ public class EndGame extends JFrame{
         scorePanel.add(score);
         
         resultPanel.add(scorePanel);
+        returnPanel.add(returnButton);
 
-        this.pack();
-        this.setVisible(true);
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    public JButton getReturnBut() {
+        return returnButton;
     }
 }

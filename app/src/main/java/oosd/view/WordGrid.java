@@ -1,9 +1,9 @@
 package oosd.view;
-import javax.swing.JPanel;
+import javax.swing.JLayeredPane;
 
 import java.util.ArrayList;
 
-public class WordGrid extends JPanel {
+public class WordGrid extends JLayeredPane {
     
     private Word[] buttons = new Word[16];
     private WordGroup[] wordGroups;

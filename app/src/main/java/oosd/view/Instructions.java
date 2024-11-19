@@ -1,9 +1,9 @@
 package oosd.view;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -15,8 +15,9 @@ import javax.swing.JPanel;
 
 public class Instructions extends JFrame {
 
-    public Instructions(ActionListener backActionListener) {
-        Color purple = new Color(187, 129, 197);
+    private JButton returnButton;
+
+    public Instructions() {
 
         // Frame setup
         this.setTitle("Connections");
@@ -28,7 +29,7 @@ public class Instructions extends JFrame {
         JPanel instructionPanel = new JPanel();
         instructionPanel.setBackground(Color.white);
         instructionPanel.setLayout(new BoxLayout(instructionPanel, BoxLayout.Y_AXIS));
-        instructionPanel.setBorder(BorderFactory.createLineBorder(purple, 20));
+        instructionPanel.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 20));
 
         // image panel
         JPanel imgPanel = new JPanel();
@@ -50,13 +51,12 @@ public class Instructions extends JFrame {
         returnPanel.setBackground(Color.white);
         returnPanel.setPreferredSize(new Dimension(700, 200));
         
-        JButton returnButton = new JButton("Return to Menu");
+        returnButton = new JButton("Return to Menu");
         returnButton.setFont(new Font("Veranda", Font.PLAIN, 15));
-        returnButton.setBackground(purple);
+        returnButton.setBackground(ColorCodes.purple);
         returnButton.setOpaque(true);
-        returnButton.setBorder(BorderFactory.createLineBorder(purple, 5));
+        returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 5));
         returnButton.setForeground(Color.white);
-        returnButton.addActionListener(backActionListener);
 
         this.add(instructionPanel);
         instructionPanel.add(imgPanel);
@@ -68,4 +68,8 @@ public class Instructions extends JFrame {
         this.pack();
         this.setVisible(true);
     } 
+
+    public JButton getReturnBut() {
+        return returnButton;
+    }
 }
