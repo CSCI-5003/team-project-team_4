@@ -27,11 +27,8 @@ import oosd.model.WordDifficulty;
 public class GameBoardGUI extends JFrame {
 
     private Controller controller;
-    private Color purple = new Color(187, 129, 197);
-    private Color lightGray = new Color(239, 239, 230);
-    private Color darkGray = new Color(90, 89, 78);
 
-    private ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
+    public ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
     private int MAX_SELECTION = 4;
     private JButton returnButton;
     private JButton submit;
@@ -46,7 +43,8 @@ public class GameBoardGUI extends JFrame {
 
     }
 
-    public GameBoardGUI(ActionListener backActionListener, GameDifficulty gameDifficulty) {
+    public GameBoardGUI(GameDifficulty gameDifficulty) {
+        
         game = new Game(gameDifficulty);
         
         // Create mainFrame
@@ -269,15 +267,6 @@ public class GameBoardGUI extends JFrame {
             }
         });
         
-
-        submit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleSubmit();
-            }
-        });
-        
-
         returnButton = new JButton("Return to Menu");
         returnButton.setFont(new Font("Veranda", Font.PLAIN, 15));
         returnButton.setBackground(ColorCodes.purple);
@@ -326,14 +315,14 @@ public class GameBoardGUI extends JFrame {
     public void handleButtonClick(Word button) {
         if (selectedButtons.contains(button)) {
             // Unselect the word
-            button.setBackground(lightGray);
-            button.setForeground(Color.BLACK);
+            button.setBackground(ColorCodes.lightGray);
+            button.setForeground(ColorCodes.black);
             selectedButtons.remove(button);
         } else {
             if (selectedButtons.size() < MAX_SELECTION) {
                 // Select the word
-                button.setBackground(darkGray);
-                button.setForeground(Color.WHITE);
+                button.setBackground(ColorCodes.darkGray);
+                button.setForeground(ColorCodes.white);
                 selectedButtons.add(button);
             } else {
                 messageLabel.setText("You can only select up to 4 words.");
@@ -587,8 +576,8 @@ public class GameBoardGUI extends JFrame {
     
             // Clear selection and reset button colors
             for (JButton button : selectedButtons) {
-                button.setBackground(lightGray);
-                button.setForeground(Color.BLACK);
+                button.setBackground(ColorCodes.lightGray);
+                button.setForeground(ColorCodes.black);
             }
             selectedButtons.clear();
     

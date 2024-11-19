@@ -67,6 +67,8 @@ public class Controller implements ActionListener {
             case "Return to Menu":
                 handleReturnButton();
                 break;
+            case "Submit":
+                break;
             default:
                 break;
         }
@@ -95,7 +97,6 @@ public class Controller implements ActionListener {
 
     private void handleHowToBut() {
         menu.setVisible(false);
-        this.instructions.setVisible(true);
         this.instructions.setVisible(true);
         this.instructions.getReturnBut().addActionListener(this);
     }
@@ -137,4 +138,6 @@ public class Controller implements ActionListener {
         this.gameBoard.getSubmitBut().addActionListener(this);
         this.gameBoard.getReturnBut().addActionListener(this);
     }
+
+    // Game Board Buttons
 }
