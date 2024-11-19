@@ -367,8 +367,8 @@ public class GameBoardGUI extends JFrame {
 
     private void checkLoss(int lives) {
         WordGroup[] wordGroups = wordGrid.getWordGroups();
-        mistakeArray[lives].setVisible(false);
-
+        System.out.println(lives);
+        
         if (lives == 0) { //for deliverable 3, add word group reveal
             messageLabel.setText("You lose.");
             for (int i = 0; i < wordGroups.length; i++) {
@@ -376,7 +376,10 @@ public class GameBoardGUI extends JFrame {
             }
         } else {
             messageLabel.setText("Incorrect, try again.");
+            wordGrid.decrementLives();
         }
+
+        mistakeArray[lives].setVisible(false);
     }
 
     public void checkGuess(WordGroup inputWordGroup) {
@@ -432,15 +435,17 @@ public class GameBoardGUI extends JFrame {
             case 0:
             case 1:
             case 2:
-                wordGrid.decrementLives();
-                checkLoss(wordGrid.getLives());
+                checkLoss(wordGrid.getLives() - 1);
                 break;
             case 3:
                 // wordGrid.decrementLives();
                 if (wordGrid.getLives() != 0) {
                     messageLabel.setText("One word off.");
+                    wordGrid.decrementLives();
+                    mistakeArray[wordGrid.getLives()].setVisible(false);
+
                 } else {
-                    checkLoss(wordGrid.getLives());
+                    checkLoss(wordGrid.getLives() - 1);
                 }
                 break;
             case 4:
