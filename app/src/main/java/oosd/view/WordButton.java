@@ -4,11 +4,11 @@ import javax.swing.JButton;
 
 import oosd.model.WordDifficulty;
 
-public class Word extends JButton{
+public class WordButton extends JButton{
     private String text;
     private WordDifficulty group;
 
-    public Word(String defaultText) {
+    public WordButton(String defaultText) {
         this.text = defaultText;
         this.setText(defaultText);
         //System.out.println("updating defaultText: " + this.text);

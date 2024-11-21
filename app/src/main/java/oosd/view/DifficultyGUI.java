@@ -130,6 +130,5 @@ public class DifficultyGUI extends JFrame {
     public JButton getReturnBut() {
         return returnButton;
     }
-    
 }
 

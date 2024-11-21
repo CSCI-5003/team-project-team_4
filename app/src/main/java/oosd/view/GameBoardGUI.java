@@ -32,6 +32,9 @@ public class GameBoardGUI extends JFrame {
     private int MAX_SELECTION = 4;
     private JButton returnButton;
     private JButton submit;
+
+    private int score;
+
     Game game;
     WordGrid wordGrid;
     JLabel messageLabel;
@@ -90,11 +93,11 @@ public class GameBoardGUI extends JFrame {
         int[] x = new int[]{55,195,335,475,55,195,335,475,55,195,335,475,55,195,335,475};
         int[] y = new int[]{25,25,25,25,130,130,130,130,235,235,235,235,340,340,340,340};
 
-        Word[] buttons = new Word[16];
+        WordButton[] buttons = new WordButton[16];
 
         for (int i = 0; i < 16; i++) {
             String word = "Word " + i;
-            buttons[i] = new Word(String.valueOf(word));
+            buttons[i] = new WordButton(String.valueOf(word));
             buttons[i].setEnabled(true);
             buttons[i].setBounds(x[i], y[i], width, height);
             buttons[i].setOpaque(true);
@@ -104,7 +107,7 @@ public class GameBoardGUI extends JFrame {
             buttons[i].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    handleButtonClick((Word) e.getSource());
+                    handleButtonClick((WordButton) e.getSource());
                 }
             });
         }
@@ -312,7 +315,7 @@ public class GameBoardGUI extends JFrame {
         checkGuess();*/
     }
 
-    public void handleButtonClick(Word button) {
+    public void handleButtonClick(WordButton button) {
         if (selectedButtons.contains(button)) {
             // Unselect the word
             button.setBackground(ColorCodes.lightGray);
@@ -336,7 +339,7 @@ public class GameBoardGUI extends JFrame {
         return individualString;
     }
 
-    private void randomizeWords(Word[] words, WordDifficulty wordDifficulty) {
+    private void randomizeWords(WordButton[] words, WordDifficulty wordDifficulty) {
         Random random = new Random();
         HashMap<String, List<String[]>> dictionary = this.game.getWordDictionary();
         //System.out.println(words[0].getText());
@@ -376,7 +379,7 @@ public class GameBoardGUI extends JFrame {
         }
     }
 
-    private WordGrid makeGrid(Word[] wordArray) {
+    private WordGrid makeGrid(WordButton[] wordArray) {
         WordGroup[] wordGroups = new WordGroup[4];
         int wordCount = 0;
         for (int i = 0; i < 4; i++) {
@@ -427,7 +430,7 @@ public class GameBoardGUI extends JFrame {
                     }
                     break;
             }
-            Word[] wordArraySubset = new Word[4];
+            WordButton[] wordArraySubset = new WordButton[4];
             for (int j = 0; j < 4; j++) {
                 wordArraySubset[j] = wordArray[wordCount];
                 //System.out.println(wordArray[wordCount].getText());
@@ -443,7 +446,7 @@ public class GameBoardGUI extends JFrame {
     }
 
     private void disableWordGroup(WordGroup wordGroup) {
-        Word[] wordList = wordGroup.getWordList();
+        WordButton[] wordList = wordGroup.getWordList();
 
         for (int i = 0; i < wordList.length; i++) {
             wordList[i].setEnabled(false);
@@ -469,7 +472,7 @@ public class GameBoardGUI extends JFrame {
 
     public void checkGuess(WordGroup inputWordGroup) {
         WordGroup[] wordGroups = wordGrid.getWordGroups();
-        Word[] inputWordList = inputWordGroup.getWordList();
+        WordButton[] inputWordList = inputWordGroup.getWordList();
 
         //Word[] inputWordList = new Word[4]; //for testing only
         //for (int i = 0; i < 4; i++) { //this for loop is for testing only
@@ -489,11 +492,11 @@ public class GameBoardGUI extends JFrame {
         int bestMatchCount = 0;
         
         for (int i = 0; i < wordGroups.length; i++) {
-            Word[] gridWordList = wordGroups[i].getWordList();
+            WordButton[] gridWordList = wordGroups[i].getWordList();
             matchCount = 0;
 
             for (int j = 0; j < gridWordList.length; j++) {
-                Word gridWord = gridWordList[j];
+                WordButton gridWord = gridWordList[j];
                 //System.out.println(gridWord.getText());
                 
                 for (int k = 0; k < inputWordList.length; k++) {
@@ -570,10 +573,10 @@ public class GameBoardGUI extends JFrame {
     
         try {
             // Create a new WordGroup for the guess
-            Word[] words = new Word[selectedButtons.size()];
+            WordButton[] words = new WordButton[selectedButtons.size()];
             for (int i = 0; i < selectedButtons.size(); i++) {
                 JButton button = selectedButtons.get(i);
-                words[i] = new Word(button.getText());
+                words[i] = new WordButton(button.getText());
             }
     
             WordGroup guess = new WordGroup(words, null);
@@ -604,5 +607,9 @@ public class GameBoardGUI extends JFrame {
             messageLabel.setText("Error handling your guess. Please try again.");
             e.printStackTrace();
         }
+    }
+
+    public int getScore() {
+        return score;
     }
 }    

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class WordGrid extends JLayeredPane {
     
-    private Word[] buttons = new Word[16];
+    private WordButton[] buttons = new WordButton[16];
     private WordGroup[] wordGroups;
     private ArrayList<WordGroup> alreadyGuessed;
     private int groupsRemaining;

@@ -39,6 +39,8 @@ public class Controller implements ActionListener {
         this.menu.getPlayNowBut().addActionListener(this);
         this.menu.gethighScoresBut().addActionListener(this);
         this.menu.getHowToBut().addActionListener(this);
+
+        this.gameBoard.getSubmitBut().addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -68,6 +70,7 @@ public class Controller implements ActionListener {
                 handleReturnButton();
                 break;
             case "Submit":
+                handleSubmit();
                 break;
             default:
                 break;
@@ -140,4 +143,11 @@ public class Controller implements ActionListener {
     }
 
     // Game Board Buttons
+    private void handleSubmit() {
+
+    }
+
+    private void handleWordButtonClick() {
+
+    }
 }

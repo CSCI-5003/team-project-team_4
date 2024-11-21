@@ -30,14 +30,14 @@ public class HighScores extends JFrame{
         // Create mainPanel
         JPanel mainPanel = new JPanel();
         mainPanel.setPreferredSize(new Dimension(700, 800));
-        mainPanel.setBackground(Color.white);
+        mainPanel.setBackground(ColorCodes.white);
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 20));
 
         // Create Title & Heading
         JPanel headingPanel = new JPanel();
         headingPanel.setBounds(0,0,700,200);
-        headingPanel.setBackground(Color.white);
+        headingPanel.setBackground(ColorCodes.white);
         headingPanel.setLayout(new BoxLayout(headingPanel, BoxLayout.Y_AXIS));
 
         JLabel title = new JLabel("Connections");
@@ -56,7 +56,7 @@ public class HighScores extends JFrame{
         // Score Panel
         JPanel scorePanel = new JPanel();
         scorePanel.setBounds(0,200,700,500);
-        scorePanel.setBackground(Color.white);
+        scorePanel.setBackground(ColorCodes.white);
         scorePanel.setLayout(new GridLayout(10,1));
 
         JLabel[] scoreLabels = new JLabel[11];
@@ -65,7 +65,7 @@ public class HighScores extends JFrame{
             String word = "Score " + i;
             scoreLabels[i] = new JLabel(String.valueOf(word), SwingConstants.CENTER);
             scoreLabels[i].setFont(new Font("Veranda", Font.PLAIN, 15));
-            scoreLabels[i].setBackground(Color.WHITE);
+            scoreLabels[i].setBackground(ColorCodes.white);
 
             scorePanel.add(scoreLabels[i]);
         }
@@ -73,14 +73,14 @@ public class HighScores extends JFrame{
         // Return Panel
         JPanel returnPanel = new JPanel();
         returnPanel.setLayout(new BoxLayout(returnPanel, BoxLayout.X_AXIS)); 
-        returnPanel.setBackground(Color.white);
+        returnPanel.setBackground(ColorCodes.white);
         
         returnButton = new JButton("Return to Menu");
         returnButton.setFont(new Font("Veranda", Font.PLAIN, 15));
         returnButton.setBackground(ColorCodes.purple);
         returnButton.setOpaque(true);
         returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 5));
-        returnButton.setForeground(Color.white);
+        returnButton.setForeground(ColorCodes.white);
 
         // Fill Panels
         this.add(mainPanel);

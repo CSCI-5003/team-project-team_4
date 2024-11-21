@@ -5,10 +5,10 @@ import java.util.Arrays;
 import oosd.model.WordDifficulty;
 
 public class WordGroup {
-    private Word[] wordList;
+    private WordButton[] wordList;
     private WordDifficulty difficulty;
 
-    public WordGroup(Word[] wordList, WordDifficulty difficulty) {
+    public WordGroup(WordButton[] wordList, WordDifficulty difficulty) {
         if (wordList == null || wordList.length != 4) {
             throw new IllegalArgumentException("WordGroup must contain exactly 4 words.");
         }
@@ -17,7 +17,7 @@ public class WordGroup {
     }
     
 
-    public Word[] getWordList() {
+    public WordButton[] getWordList() {
         return this.wordList;
     }
 
