@@ -21,7 +21,7 @@ public class WordGroup {
         return this.wordList;
     }
 
-    public WordDifficulty geWordDifficulty() {
+    public WordDifficulty getWordDifficulty() {
         return this.difficulty;
     }
 
