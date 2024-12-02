@@ -1,5 +1,6 @@
 package oosd.view;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -30,6 +31,22 @@ public class GameBoardGUI extends JFrame {
     private JButton submit;
     private JButton returnButton;
 
+    private JPanel result1;
+    private JLabel category1;
+    private JLabel words1;
+
+    private JPanel result2;
+    private JLabel category2;
+    private JLabel words2;
+
+    private JPanel result3;
+    private JLabel category3;
+    private JLabel words3;
+
+    private JPanel result4;
+    private JLabel category4;
+    private JLabel words4;
+
     Game game;
     WordGrid wordGrid;
     JLabel messageLabel;
@@ -44,7 +61,6 @@ public class GameBoardGUI extends JFrame {
             game = new Game(gameDifficulty);
             
             // Create mainFrame
-            
             this.setTitle("Connections");
             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.setPreferredSize(new Dimension(700, 800));
@@ -83,7 +99,6 @@ public class GameBoardGUI extends JFrame {
 
             this.controller.setMessageLabel(this.messageLabel);
 
-    
             // Create Word Grid
             int width = 130;
             int height = 95;
@@ -102,7 +117,6 @@ public class GameBoardGUI extends JFrame {
                 buttons[i].setBackground(ColorCodes.lightGray);
     
                 buttons[i].addActionListener(e -> controller.handleButtonClick((WordButton) e.getSource()));
-
             }
     
             WordGrid gridPanel = makeGrid(buttons);
@@ -122,20 +136,18 @@ public class GameBoardGUI extends JFrame {
     
             // Create Result Bars
             // Result One
-            JPanel result1 = new JPanel();
+            result1 = new JPanel();
             result1.setBackground(ColorCodes.yellow);
             result1.setBounds(55,25,550,95);
             result1.setLayout(new BoxLayout(result1, BoxLayout.Y_AXIS));
             result1.setVisible(false);
     
-            JLabel category1 = new JLabel();
+            category1 = new JLabel();
             category1.setAlignmentX(Component.CENTER_ALIGNMENT);
-            category1.setText("FOOD-RELATED JUMBLES");
             category1.setFont(new Font("Veranda", Font.BOLD, 20));
             
-            JLabel words1 = new JLabel();
+            words1 = new JLabel();
             words1.setAlignmentX(Component.CENTER_ALIGNMENT);
-            words1.setText("HASH, SALAD, SCRAMBLE, STEW");
             words1.setFont(new Font("Veranda", Font.PLAIN, 15));
     
             result1.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -144,20 +156,18 @@ public class GameBoardGUI extends JFrame {
             result1.add(words1);
     
             // Result Two
-            JPanel result2 = new JPanel();
+            result2 = new JPanel();
             result2.setBackground(ColorCodes.green);
             result2.setBounds(55,130,550,95);
             result2.setLayout(new BoxLayout(result2, BoxLayout.Y_AXIS));
             result2.setVisible(false);
     
-            JLabel category2 = new JLabel();
+            category2 = new JLabel();
             category2.setAlignmentX(Component.CENTER_ALIGNMENT);
-            category2.setText("PUBLIC STANDING");
             category2.setFont(new Font("Veranda", Font.BOLD, 20));
             
-            JLabel words2 = new JLabel();
+            words2 = new JLabel();
             words2.setAlignmentX(Component.CENTER_ALIGNMENT);
-            words2.setText("CHARACTER, IMAGE, NAME, REPUTATION");
             words2.setFont(new Font("Veranda", Font.PLAIN, 15));
     
             result2.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -166,20 +176,18 @@ public class GameBoardGUI extends JFrame {
             result2.add(words2);
     
             // Result Three
-            JPanel result3 = new JPanel();
+            result3 = new JPanel();
             result3.setBackground(ColorCodes.blue);
             result3.setBounds(55,235,550,95);
             result3.setLayout(new BoxLayout(result3, BoxLayout.Y_AXIS));
             result3.setVisible(false);
     
-            JLabel category3 = new JLabel();
+            category3 = new JLabel();
             category3.setAlignmentX(Component.CENTER_ALIGNMENT);
-            category3.setText("INFO ON A MUSEUM PLACARD");
             category3.setFont(new Font("Veranda", Font.BOLD, 20));
             
-            JLabel words3 = new JLabel();
+            words3 = new JLabel();
             words3.setAlignmentX(Component.CENTER_ALIGNMENT);
-            words3.setText("ARTIST, MEDIUM, TITLE, YEAR");
             words3.setFont(new Font("Veranda", Font.PLAIN, 15));
     
             result3.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -188,20 +196,18 @@ public class GameBoardGUI extends JFrame {
             result3.add(words3);
     
             // Result 4
-            JPanel result4 = new JPanel();
+            result4 = new JPanel();
             result4.setBackground(ColorCodes.purple);
             result4.setBounds(55,340,550,95);
             result4.setLayout(new BoxLayout(result4, BoxLayout.Y_AXIS));
             result4.setVisible(false);
     
-            JLabel category4 = new JLabel();
+            category4 = new JLabel();
             category4.setAlignmentX(Component.CENTER_ALIGNMENT);
-            category4.setText("ANAGRAMS OF FAMOUS PAINTERS");
             category4.setFont(new Font("Veranda", Font.BOLD, 20));
             
-            JLabel words4 = new JLabel();
+            words4 = new JLabel();
             words4.setAlignmentX(Component.CENTER_ALIGNMENT);
-            words4.setText("DIAL, EGADS, MONTE, YOGA");
             words4.setFont(new Font("Veranda", Font.PLAIN, 15));
     
             result4.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -209,7 +215,6 @@ public class GameBoardGUI extends JFrame {
             result4.add(Box.createRigidArea(new Dimension(0, 10)));
             result4.add(words4);
     
-        
             // Create Mistake Tracker
             JPanel mistakePanel = new JPanel();
             mistakePanel.setLayout(new BoxLayout(mistakePanel, BoxLayout.X_AXIS));
@@ -301,14 +306,7 @@ public class GameBoardGUI extends JFrame {
 
         this.pack();
         this.setVisible(true);
-
-        /*//for testing, delete later
-        checkGuess();
-        checkGuess();
-        checkGuess();
-        checkGuess();*/
     }
-
 
     private String getIndividualWord( List<String[]> colorList, int i, int randomIntInRange) {
         String[] groupStringArray = colorList.get(randomIntInRange);
@@ -319,16 +317,22 @@ public class GameBoardGUI extends JFrame {
     private void randomizeWords(WordButton[] words, WordDifficulty wordDifficulty) {
         Random random = new Random();
         HashMap<String, List<String[]>> dictionary = this.game.getWordDictionary();
-        //System.out.println(words[0].getText());
+
         List<String[]> yellowList = dictionary.get("Yellow");
         List<String[]> greenList = dictionary.get("Green");
         List<String[]> blueList = dictionary.get("Blue");
         List<String[]> purpleList = dictionary.get("Purple");
 
+        String yellowCategory = yellowList.get(0)[3];
+        String greenCategory = greenList.get(0)[3];
+        String blueCategory = blueList.get(0)[3];
+        String purpleCategory = purpleList.get(0)[3];
+
         int yellowIntInRange = random.nextInt(yellowList.size());
         int greenIntInRange = random.nextInt(greenList.size());
         int blueIntInRange = random.nextInt(blueList.size());
         int purpleIntInRange = random.nextInt(purpleList.size());
+        
         for (int i = 0; i < 4; i++) {
             //System.out.println("setting text in getWords");
             
@@ -352,7 +356,6 @@ public class GameBoardGUI extends JFrame {
                     break;
             }
             words[i].updateText(individualString);
-            //System.out.println(words[i].getText());
         }
     }
 
@@ -433,4 +436,29 @@ public class GameBoardGUI extends JFrame {
     public int getScore() {
         return score;
     }
+
+    public void setAnswerBar1(Color background, String category, String words) {
+        result1.setBackground(background);
+        category1.setText(category);
+        words1.setText(words);
+    }
+
+    public void setAnswerBar2(Color background, String category, String words) {
+        result2.setBackground(background);
+        category2.setText(category);
+        words2.setText(words);
+    }
+
+    public void setAnswerBar3(Color background, String category, String words) {
+        result3.setBackground(background);
+        category3.setText(category);
+        words3.setText(words);
+    }
+
+    public void setAnswerBar4(Color background, String category, String words) {
+        result4.setBackground(background);
+        category4.setText(category);
+        words4.setText(words);
+    }
+
 }    

@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import oosd.model.Game;
 import oosd.model.GameDifficulty;
 import oosd.model.ScoreManager;
 import oosd.view.ColorCodes;
@@ -35,7 +36,7 @@ public class Controller implements ActionListener {
     private List<JButton> selectedButtons = new ArrayList<>();
     private JLabel[] mistakeArray;
     private JLabel messageLabel; // Needs to be passed in or initialized
-    private WordGrid wordGrid;   // Assuming this is part of your model
+    private WordGrid wordGrid;  // Assuming this is part of your model
     private static final int MAX_SELECTION = 4;
 
     public Controller(MenuGUI menu) {
@@ -242,19 +243,21 @@ public class Controller implements ActionListener {
         WordGroup[] wordGroups = wordGrid.getWordGroups();
         WordButton[] inputWordList = inputWordGroup.getWordList();
 
-        //Word[] inputWordList = new Word[4]; //for testing only
-        //for (int i = 0; i < 4; i++) { //this for loop is for testing only
-            //Word word = new Word(wordGroups[i].getWordList()[i].getText()); //Test case 1/4 correct
-            /*Word word = new Word(wordGroups[0].getWordList()[i].getText()); //Test case 3/4 correct
+        /* testing
+        Word[] inputWordList = new Word[4]; //for testing only
+        for (int i = 0; i < 4; i++) { //this for loop is for testing only
+            Word word = new Word(wordGroups[i].getWordList()[i].getText()); //Test case 1/4 correct
+            Word word = new Word(wordGroups[0].getWordList()[i].getText()); //Test case 3/4 correct
             if (i == 3) {
                 word.updateText(wordGroups[1].getWordList()[i].getText());
-            }*/
-            /*Word word = new Word(wordGroups[0].getWordList()[i].getText()); //Test case 4/4 correct. 
+            }
+            Word word = new Word(wordGroups[0].getWordList()[i].getText()); //Test case 4/4 correct. 
             Seemingly doesn't disable all buttons, 
-            but in practice the same guess won't ble able to be made multiple times*/
-            //inputWordList[i] = word;
-        //}
-        //WordGroup inputWordGroup = new WordGroup(inputWordList, WordDifficulty.BLUE); //for testing only
+            but in practice the same guess won't ble able to be made multiple times
+            inputWordList[i] = word;
+        }
+        WordGroup inputWordGroup = new WordGroup(inputWordList, WordDifficulty.BLUE); //for testing only
+        */
 
         int matchCount = 0;
         int bestMatchCount = 0;
@@ -311,12 +314,20 @@ public class Controller implements ActionListener {
                     scoreManager.saveScore(); // Save the score to file
                 } else {
                     messageLabel.setText("Correct! Points: " + points);
+                    switch (wordGrid.getGroupsRemaining()) {
+                        case (3):
+                            System.out.println("bestMatchCount: " + bestMatchCount);
+                            //GameBoardGUI.setAnswerBar1(ColorCodes.yellow, "category", inputWordGroup);
+                            break;
+                    
+                        default:
+                            break;
+                    }
 
                 }
                 break;
         }
     }
-        
 
     private void checkLoss(int lives) {
         WordGroup[] wordGroups = wordGrid.getWordGroups();
@@ -337,7 +348,6 @@ public class Controller implements ActionListener {
         }
     }
     
-
     private void disableWordGroup(WordGroup wordGroup) {
         WordButton[] wordList = wordGroup.getWordList();
 
@@ -355,7 +365,6 @@ public class Controller implements ActionListener {
             default: return 0;
         }
     }
-    
 
     public void setMistakeArray(JLabel[] mistakeArray) {
         this.mistakeArray = mistakeArray;
@@ -368,6 +377,4 @@ public class Controller implements ActionListener {
     public void setWordGrid(WordGrid wordGrid) {
         this.wordGrid = wordGrid;
     }
-
-
 }

@@ -88,4 +88,5 @@ public class Game {
     public HashMap<String, List<String[]>> getWordDictionary() {
         return this.dictionary;
     }
+    
 }

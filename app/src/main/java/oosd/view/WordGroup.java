@@ -15,7 +15,6 @@ public class WordGroup {
         this.wordList = wordList;
         this.difficulty = difficulty;
     }
-    
 
     public WordButton[] getWordList() {
         return this.wordList;

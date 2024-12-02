@@ -113,7 +113,6 @@ public class DifficultyGUI extends JFrame {
         this.pack();
         this.setVisible(true);
     }
-
     
     public JButton getEasyBut() {
         return easy;

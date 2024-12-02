@@ -11,14 +11,11 @@ public class WordGrid extends JLayeredPane {
     private int groupsRemaining;
     private int lives;
     
-    
     public WordGrid(WordGroup[] wordGroups) {
-
         this.wordGroups = wordGroups;
         alreadyGuessed = new ArrayList<WordGroup>();
         groupsRemaining = 4;
         lives = 4;
-
     }
 
     public WordGroup[] getWordGroups() {
