@@ -1,6 +1,8 @@
 package oosd.view;
 import javax.swing.JLayeredPane;
 
+import oosd.model.WordGroup;
+
 import java.util.ArrayList;
 
 public class WordGrid extends JLayeredPane {
@@ -12,13 +14,13 @@ public class WordGrid extends JLayeredPane {
     private int lives;
     
     
-    public WordGrid(WordGroup[] wordGroups) {
+    public WordGrid(WordGroup[] wordGroups, WordButton[] wordButtons) {
 
         this.wordGroups = wordGroups;
         alreadyGuessed = new ArrayList<WordGroup>();
         groupsRemaining = 4;
         lives = 4;
-
+        this.buttons = wordButtons;
     }
 
     public WordGroup[] getWordGroups() {
@@ -47,5 +49,9 @@ public class WordGrid extends JLayeredPane {
 
     public void addGuess(WordGroup guess) {
         alreadyGuessed.add(guess);
+    }
+
+    public WordButton[] getWordButtons() {
+        return this.buttons;
     }
 }

@@ -22,11 +22,14 @@ import javax.swing.JPanel;
 import oosd.controller.Controller;
 import oosd.model.Game;
 import oosd.model.GameDifficulty;
+import oosd.model.Observer;
 import oosd.model.WordDifficulty;
+import oosd.model.WordGroup;
 
-public class GameBoardGUI extends JFrame {
+public class GameBoardGUI extends JFrame implements Observer {
 
     private Controller controller;
+    private Game game;
 
     public ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
     private int MAX_SELECTION = 4;
@@ -35,8 +38,9 @@ public class GameBoardGUI extends JFrame {
 
     private int score;
 
-    Game game;
+    
     WordGrid wordGrid;
+    WordButton[] wordButtons;
     JLabel messageLabel;
     JLabel[] mistakeArray;
 
@@ -46,9 +50,10 @@ public class GameBoardGUI extends JFrame {
 
     }
 
-    public GameBoardGUI(GameDifficulty gameDifficulty) {
-        
-        game = new Game(gameDifficulty);
+    public GameBoardGUI(GameDifficulty gameDifficulty, Controller controller) {
+        this.controller = controller;
+        this.game = controller.getGame();
+        this.game.addObserver(this);
         
         // Create mainFrame
         this.setTitle("Connections");
@@ -94,6 +99,7 @@ public class GameBoardGUI extends JFrame {
         int[] y = new int[]{25,25,25,25,130,130,130,130,235,235,235,235,340,340,340,340};
 
         WordButton[] buttons = new WordButton[16];
+        this.wordButtons = buttons;
 
         for (int i = 0; i < 16; i++) {
             String word = "Word " + i;
@@ -308,11 +314,6 @@ public class GameBoardGUI extends JFrame {
         this.pack();
         this.setVisible(true);
 
-        /*//for testing, delete later
-        checkGuess();
-        checkGuess();
-        checkGuess();
-        checkGuess();*/
     }
 
     public void handleButtonClick(WordButton button) {
@@ -339,9 +340,10 @@ public class GameBoardGUI extends JFrame {
         return individualString;
     }
 
-    private void randomizeWords(WordButton[] words, WordDifficulty wordDifficulty) {
+    private String[] randomizeWords(String[] words, WordDifficulty wordDifficulty, int groupNumber) { //move to model?
         Random random = new Random();
-        HashMap<String, List<String[]>> dictionary = this.game.getWordDictionary();
+        WordButton[] wordButtons = this.wordButtons;
+        HashMap<String, List<String[]>> dictionary = game.getWordDictionary();
         //System.out.println(words[0].getText());
         List<String[]> yellowList = dictionary.get("Yellow");
         List<String[]> greenList = dictionary.get("Green");
@@ -360,23 +362,28 @@ public class GameBoardGUI extends JFrame {
                 case WordDifficulty.YELLOW:
                     individualString = getIndividualWord(yellowList, i, yellowIntInRange);
                     System.out.println("Yellow Group: " + individualString);
+                    words[i] = individualString;
                     break;
                 case WordDifficulty.GREEN:
                     individualString = getIndividualWord(greenList, i, greenIntInRange);
                     System.out.println("Green Group: " + individualString);
+                    words[i] = individualString;
                     break;
                 case WordDifficulty.BLUE:
                     individualString = getIndividualWord(blueList, i, blueIntInRange);
                     System.out.println("Blue Group: " + individualString);
+                    words[i] = individualString;
                     break;
                 case WordDifficulty.PURPLE:
                     individualString = getIndividualWord(purpleList, i, purpleIntInRange);
                     System.out.println("Purple Group: " + individualString);
+                    words[i] = individualString;
                     break;
             }
-            words[i].updateText(individualString);
+            wordButtons[i + (4 * groupNumber)].updateText(individualString); //this should update view
             //System.out.println(words[i].getText());
         }
+        return words;
     }
 
     private WordGrid makeGrid(WordButton[] wordArray) {
@@ -430,122 +437,56 @@ public class GameBoardGUI extends JFrame {
                     }
                     break;
             }
-            WordButton[] wordArraySubset = new WordButton[4];
+            String[] wordArraySubset = new String[4];
             for (int j = 0; j < 4; j++) {
-                wordArraySubset[j] = wordArray[wordCount];
-                //System.out.println(wordArray[wordCount].getText());
+                wordArraySubset[j] = wordArray[wordCount].getText();
+                //System.out.println("THE WORD IS "+wordArray[wordCount].getText());
                 wordCount++;
             }
-            randomizeWords(wordArraySubset, wordDifficulty);
+            wordArraySubset = randomizeWords(wordArraySubset, wordDifficulty, i); //make this return a randomized string array
             WordGroup wordGroup = new WordGroup(wordArraySubset, wordDifficulty);
             wordGroups[i] = wordGroup;
+            //System.out.println("ASSIGNING" + wordArraySubset[0]);
+            //System.out.println("ASSIGNING" + wordGroup.getWordList()[0]);
         }
-        WordGrid wordGrid = new WordGrid(wordGroups);
+        WordGrid wordGrid = new WordGrid(wordGroups, wordArray);
+        game.setWordGroups(wordGroups);
+        System.out.println("FIRST WORD GROUP WORD IS: " + wordGroups[0].getWordList()[0]);
         //System.out.println("returning the wordGrid that was made");
         return wordGrid;
     }
 
-    private void disableWordGroup(WordGroup wordGroup) {
-        WordButton[] wordList = wordGroup.getWordList();
 
-        for (int i = 0; i < wordList.length; i++) {
-            wordList[i].setEnabled(false);
+    private void disableWordGroup(WordGroup wordGroup) {
+        String[] wordStrings = wordGroup.getWordList();
+        WordButton[] wordButtons = this.wordGrid.getWordButtons();
+
+        for (int i = 0; i < wordStrings.length; i++) {
+            String disableWord = wordStrings[i];
+
+            for (int j = 0; j < wordButtons.length; j++) {
+                if (disableWord.equals(wordButtons[j].getText())) {
+                    wordButtons[j].setEnabled(false);
+                }
+            }
         }
     }
 
     private void checkLoss(int lives) {
-        WordGroup[] wordGroups = wordGrid.getWordGroups();
-        System.out.println(lives);
+        WordButton[] wordButtons = wordGrid.getWordButtons();
+        //System.out.println(lives);
         
         if (lives == 0) { //for deliverable 3, add word group reveal
             messageLabel.setText("You lose.");
-            for (int i = 0; i < wordGroups.length; i++) {
-                disableWordGroup(wordGroups[i]);
+            for (int i = 0; i < wordButtons.length; i++) {
+                wordButtons[i].setEnabled(false);
             }
         } else {
             messageLabel.setText("Incorrect, try again.");
-            wordGrid.decrementLives();
+            game.decrementLives();
         }
 
         mistakeArray[lives].setVisible(false);
-    }
-
-    public void checkGuess(WordGroup inputWordGroup) {
-        WordGroup[] wordGroups = wordGrid.getWordGroups();
-        WordButton[] inputWordList = inputWordGroup.getWordList();
-
-        //Word[] inputWordList = new Word[4]; //for testing only
-        //for (int i = 0; i < 4; i++) { //this for loop is for testing only
-            //Word word = new Word(wordGroups[i].getWordList()[i].getText()); //Test case 1/4 correct
-            /*Word word = new Word(wordGroups[0].getWordList()[i].getText()); //Test case 3/4 correct
-            if (i == 3) {
-                word.updateText(wordGroups[1].getWordList()[i].getText());
-            }*/
-            /*Word word = new Word(wordGroups[0].getWordList()[i].getText()); //Test case 4/4 correct. 
-            Seemingly doesn't disable all buttons, 
-            but in practice the same guess won't ble able to be made multiple times*/
-            //inputWordList[i] = word;
-        //}
-        //WordGroup inputWordGroup = new WordGroup(inputWordList, WordDifficulty.BLUE); //for testing only
-
-        int matchCount = 0;
-        int bestMatchCount = 0;
-        
-        for (int i = 0; i < wordGroups.length; i++) {
-            WordButton[] gridWordList = wordGroups[i].getWordList();
-            matchCount = 0;
-
-            for (int j = 0; j < gridWordList.length; j++) {
-                WordButton gridWord = gridWordList[j];
-                //System.out.println(gridWord.getText());
-                
-                for (int k = 0; k < inputWordList.length; k++) {
-                    if (inputWordList[k].getText().equals(gridWord.getText())) {
-                        System.out.println("Determined that " + inputWordList[k].getText() + " is equal to " + gridWord.getText());
-                        matchCount++;
-                        
-                        if (matchCount > bestMatchCount) {
-                            bestMatchCount = matchCount;
-                        }
-                        System.out.println("Increased bestMatchCount to " + bestMatchCount + " at row " + j + " column " + i);
-                        if (matchCount == 4) {
-                            inputWordGroup = wordGroups[i];
-                        }
-                    } else {
-                        //System.out.println(inputWordList[k].getText() + " is not equal to " + gridWord.getText());
-                    }
-                }
-            }
-        }
-        System.out.println(bestMatchCount);
-
-        switch(bestMatchCount) {
-            case 0:
-            case 1:
-            case 2:
-                checkLoss(wordGrid.getLives() - 1);
-                break;
-            case 3:
-                // wordGrid.decrementLives();
-                if (wordGrid.getLives() != 0) {
-                    messageLabel.setText("One word off.");
-                    wordGrid.decrementLives();
-                    mistakeArray[wordGrid.getLives()].setVisible(false);
-
-                } else {
-                    checkLoss(wordGrid.getLives() - 1);
-                }
-                break;
-            case 4:
-                wordGrid.decrementGroupsRemaining();
-                disableWordGroup(inputWordGroup);
-                if (wordGrid.getGroupsRemaining() == 0) {
-                    messageLabel.setText("You win!");
-                } else {
-                    messageLabel.setText("Correct!");
-                }
-                break;
-        }
     }
 
     public JButton getSubmitBut() {
@@ -573,10 +514,10 @@ public class GameBoardGUI extends JFrame {
     
         try {
             // Create a new WordGroup for the guess
-            WordButton[] words = new WordButton[selectedButtons.size()];
+            String[] words = new String[selectedButtons.size()];
             for (int i = 0; i < selectedButtons.size(); i++) {
                 JButton button = selectedButtons.get(i);
-                words[i] = new WordButton(button.getText());
+                words[i] = new String(button.getText());
             }
     
             WordGroup guess = new WordGroup(words, null);
@@ -601,7 +542,7 @@ public class GameBoardGUI extends JFrame {
             System.out.println("Already guessed groups: " + wordGrid.getAlreadyGuessed());
     
             // Check the guess for correctness
-            checkGuess(guess);
+            game.checkGuess(guess);
     
         } catch (Exception e) {
             messageLabel.setText("Error handling your guess. Please try again.");
@@ -611,5 +552,40 @@ public class GameBoardGUI extends JFrame {
 
     public int getScore() {
         return score;
+    }
+
+    @Override
+    public void update(int matchCount, WordGroup correctWords) {
+        System.out.println("matchCount on view is: " + matchCount);
+        switch(matchCount) {
+            case 0:
+            case 1:
+            case 2:
+                checkLoss(game.getLives() - 1);
+                break;
+            case 3:
+                // wordGrid.decrementLives();
+                if (game.getLives() != 0) {
+                    messageLabel.setText("One word off.");
+                    //wordGrid.decrementLives();
+                    game.decrementLives();
+                    mistakeArray[game.getLives()].setVisible(false);
+
+                } else {
+                    checkLoss(game.getLives() - 1);
+                }
+                break;
+            case 4:
+                //wordGrid.decrementGroupsRemaining();
+                disableWordGroup(correctWords); //pass the words to get disabled
+                System.out.println("groups remaining = " + game.getGroupsRemaining());
+                if (game.getGroupsRemaining() == 1) {
+                    messageLabel.setText("You win!");
+                } else {
+                    messageLabel.setText("Correct!");
+                    game.decrementGroupsRemaining();
+                }
+                break;
+        }
     }
 }    

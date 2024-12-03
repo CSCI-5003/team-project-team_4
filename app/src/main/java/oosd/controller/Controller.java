@@ -2,6 +2,7 @@ package oosd.controller;
 
 import java.awt.event.ActionListener;
 
+import oosd.model.Game;
 import oosd.model.GameDifficulty;
 import oosd.view.DifficultyGUI;
 import oosd.view.EndGame;
@@ -14,6 +15,7 @@ import java.awt.event.ActionEvent;
 
 public class Controller implements ActionListener {
 
+    Game game;
     private GameBoardGUI gameBoard;
     private MenuGUI menu;
     private HighScores highScores;
@@ -23,8 +25,9 @@ public class Controller implements ActionListener {
 
     public Controller(MenuGUI menu) {
         
+        this.game = new Game(GameDifficulty.MEDIUM);
         this.menu = new MenuGUI();
-        this.gameBoard = new GameBoardGUI(GameDifficulty.MEDIUM); 
+        this.gameBoard = new GameBoardGUI(GameDifficulty.MEDIUM, this);
         this.highScores = new HighScores();
         //this.endGame = new EndGame();
         this.difficulty = new DifficultyGUI();
@@ -113,8 +116,8 @@ public class Controller implements ActionListener {
     // difficulty buttons
     private void handleEasy() {
         difficulty.setVisible(false);
-        GameBoardGUI gameBoard = new GameBoardGUI(GameDifficulty.EASY);
-        this.gameBoard = gameBoard;
+        //GameBoardGUI gameBoard = new GameBoardGUI(GameDifficulty.EASY, this);
+        //this.gameBoard = gameBoard;
         this.gameBoard.setVisible(true);
 
         this.gameBoard.getSubmitBut().addActionListener(this);
@@ -123,8 +126,8 @@ public class Controller implements ActionListener {
 
     private void handleMedium() {
         difficulty.setVisible(false);
-        GameBoardGUI gameBoard = new GameBoardGUI(GameDifficulty.MEDIUM);
-        this.gameBoard = gameBoard;
+        //GameBoardGUI gameBoard = new GameBoardGUI(GameDifficulty.MEDIUM, this);
+        //this.gameBoard = gameBoard;
         this.gameBoard.setVisible(true);
 
         this.gameBoard.getSubmitBut().addActionListener(this);
@@ -134,8 +137,8 @@ public class Controller implements ActionListener {
     private void handleHard() {
         difficulty.setVisible(false);
         this.gameBoard.setVisible(true);
-        GameBoardGUI gameBoard = new GameBoardGUI(GameDifficulty.HARD);
-        this.gameBoard = gameBoard;
+        //GameBoardGUI gameBoard = new GameBoardGUI(GameDifficulty.HARD, this);
+        //this.gameBoard = gameBoard;
         this.gameBoard.setVisible(true);
 
         this.gameBoard.getSubmitBut().addActionListener(this);
@@ -149,5 +152,9 @@ public class Controller implements ActionListener {
 
     private void handleWordButtonClick() {
 
+    }
+
+    public Game getGame() {
+        return this.game;
     }
 }
