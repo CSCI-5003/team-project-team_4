@@ -1,18 +1,16 @@
 package oosd.model;
 
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.exceptions.CsvValidationException;
-
-import oosd.view.WordButton;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
+
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvValidationException;
 
 public class Game {
     private ArrayList<Observer> observers = new ArrayList<>();
@@ -168,6 +166,7 @@ public class Game {
     }
 
     public void notifyObservers(int matchCount, WordGroup correctWords) {
+        System.out.println("# OBSERVERS IS: "+observers.size());
         for (Observer observer : observers) {
             observer.update(matchCount, correctWords);
             //System.out.println("Observer list: " + observer);

@@ -1,10 +1,10 @@
 package oosd.view;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -18,6 +18,8 @@ import javax.swing.SwingConstants;
 public class HighScores extends JFrame{
     
     private JButton returnButton;
+    private JPanel scorePanel;
+
 
     public HighScores() {
 
@@ -54,21 +56,10 @@ public class HighScores extends JFrame{
         highScore.setForeground(ColorCodes.purple);
 
         // Score Panel
-        JPanel scorePanel = new JPanel();
+        scorePanel = new JPanel();
         scorePanel.setBounds(0,200,700,500);
         scorePanel.setBackground(ColorCodes.white);
         scorePanel.setLayout(new GridLayout(10,1));
-
-        JLabel[] scoreLabels = new JLabel[11];
-
-        for (int i = 1; i < 11; i++) {
-            String word = "Score " + i;
-            scoreLabels[i] = new JLabel(String.valueOf(word), SwingConstants.CENTER);
-            scoreLabels[i].setFont(new Font("Veranda", Font.PLAIN, 15));
-            scoreLabels[i].setBackground(ColorCodes.white);
-
-            scorePanel.add(scoreLabels[i]);
-        }
 
         // Return Panel
         JPanel returnPanel = new JPanel();
@@ -97,6 +88,24 @@ public class HighScores extends JFrame{
 
         this.pack();
         this.setVisible(true);
+    }
+
+    public void updateScores(List<Integer> scores) {
+        scorePanel.removeAll();
+        for (int i = 0; i < scores.size(); i++) {
+            JLabel scoreLabel = new JLabel("Rank " + (i + 1) + ": " + scores.get(i), SwingConstants.CENTER);
+            scoreLabel.setFont(new Font("Veranda", Font.PLAIN, 15));
+            scoreLabel.setBackground(ColorCodes.white);
+            scorePanel.add(scoreLabel);
+        }
+        for (int i = scores.size(); i < 10; i++) {
+            JLabel scoreLabel = new JLabel("Rank " + (i + 1) + ": ---", SwingConstants.CENTER);
+            scoreLabel.setFont(new Font("Veranda", Font.PLAIN, 15));
+            scoreLabel.setBackground(ColorCodes.white);
+            scorePanel.add(scoreLabel);
+        }
+        scorePanel.revalidate();
+        scorePanel.repaint();
     }
 
     public JButton getReturnBut() {

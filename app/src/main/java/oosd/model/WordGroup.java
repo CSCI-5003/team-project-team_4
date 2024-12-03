@@ -14,13 +14,12 @@ public class WordGroup {
         this.wordList = wordList;
         this.difficulty = difficulty;
     }
-    
 
     public String[] getWordList() {
         return this.wordList;
     }
 
-    public WordDifficulty geWordDifficulty() {
+    public WordDifficulty getWordDifficulty() {
         return this.difficulty;
     }
 
