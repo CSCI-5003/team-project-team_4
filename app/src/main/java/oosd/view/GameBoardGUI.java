@@ -24,6 +24,7 @@ import oosd.controller.Controller;
 import oosd.model.Game;
 import oosd.model.GameDifficulty;
 import oosd.model.Observer;
+import oosd.model.ScoreManager;
 import oosd.model.WordDifficulty;
 import oosd.model.WordGroup;
 
@@ -31,6 +32,8 @@ public class GameBoardGUI extends JFrame implements Observer {
 
     private Controller controller;
     private Game game;
+    private ScoreManager scoreManager;
+
 
     public ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
     private int MAX_SELECTION = 4;
@@ -55,6 +58,10 @@ public class GameBoardGUI extends JFrame implements Observer {
     private JLabel category4;
     private JLabel words4;
 
+    private JLabel scoreLabel;
+    
+
+
     
     WordGrid wordGrid;
     WordButton[] wordButtons;
@@ -62,8 +69,9 @@ public class GameBoardGUI extends JFrame implements Observer {
     
         private JLabel[] mistakeArray;
         
-        public GameBoardGUI(GameDifficulty gameDifficulty, Controller controller) {
+        public GameBoardGUI(GameDifficulty gameDifficulty, Controller controller,  ScoreManager scoreManager) {
             this.game = controller.getGame();
+            this.scoreManager = scoreManager;
             this.game.addObserver(this);
 
             this.controller = controller; // Set the controller immediately
@@ -245,6 +253,13 @@ public class GameBoardGUI extends JFrame implements Observer {
             JLabel life2 = new JLabel(" ⏺");
             JLabel life3 = new JLabel(" ⏺");
             JLabel life4 = new JLabel(" ⏺");
+
+            scoreLabel = new JLabel("Score: " + scoreManager.getCurrentScore());
+            scoreLabel.setFont(new Font("Verdana", Font.BOLD, 15));
+            scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            mainPanel.add(scoreLabel);
+
+
     
             mistakeArray[0] = life1;
             mistakeArray[1] = life2;
@@ -466,21 +481,24 @@ public class GameBoardGUI extends JFrame implements Observer {
     }
 
     private void checkLoss(int lives) {
-        WordButton[] wordButtons = wordGrid.getWordButtons();
-        //System.out.println(lives);
-        
-        if (lives == 0) { //for deliverable 3, add word group reveal
+        if (lives == 0) {
+            scoreManager.addPoints(-5);
+            scoreLabel.setText("Score: " + scoreManager.getCurrentScore());
             messageLabel.setText("You lose.");
-            for (int i = 0; i < wordButtons.length; i++) {
-                wordButtons[i].setEnabled(false);
+            for (WordButton button : wordGrid.getWordButtons()) {
+                button.setEnabled(false);
             }
+            scoreManager.saveScore();
         } else {
             messageLabel.setText("Incorrect, try again.");
+
+            scoreManager.addPoints(-5);
+            scoreLabel.setText("Score: " + scoreManager.getCurrentScore()); // Update score label
             game.decrementLives();
         }
-
         mistakeArray[lives].setVisible(false);
     }
+    
 
     public JButton getSubmitBut() {
         return submit;
@@ -532,19 +550,19 @@ public class GameBoardGUI extends JFrame implements Observer {
                 if (game.getLives() != 0) {
                     messageLabel.setText("One word off.");
                     //wordGrid.decrementLives();
-                    game.decrementLives();
-                    mistakeArray[game.getLives()].setVisible(false);
-
+                    break;
                 } else {
                     checkLoss(game.getLives() - 1);
                 }
                 break;
             case 4:
-                //wordGrid.decrementGroupsRemaining();
-                disableWordGroup(correctWords); //pass the words to get disabled
-                System.out.println("groups remaining = " + game.getGroupsRemaining());
+                disableWordGroup(correctWords); // Disable the guessed group
+                String difficulty = correctWords.getWordDifficulty().toString(); // Assuming `correctWords` has difficulty info
+                scoreManager.addPointsByDifficulty(difficulty); // Add points based on difficulty
+                scoreLabel.setText("Score: " + scoreManager.getCurrentScore()); 
                 if (game.getGroupsRemaining() == 1) {
                     messageLabel.setText("You win!");
+                    scoreManager.saveScore(); // Save the final score
                 } else {
                     messageLabel.setText("Correct!");
                     game.decrementGroupsRemaining();
@@ -552,4 +570,4 @@ public class GameBoardGUI extends JFrame implements Observer {
                 break;
         }
     }
-}    
+}

@@ -42,11 +42,11 @@ public class Controller implements ActionListener {
 
     public Controller(MenuGUI menu) {
         
+        this.scoreManager = new ScoreManager();
         this.game = new Game(GameDifficulty.MEDIUM);
         this.menu = new MenuGUI();
-        this.gameBoard = new GameBoardGUI(GameDifficulty.MEDIUM, this);
-        this.highScores = new HighScores();
-        this.scoreManager = new ScoreManager();
+        this.gameBoard = new GameBoardGUI(GameDifficulty.MEDIUM, this, scoreManager);
+        this.highScores = new HighScores(scoreManager);
         //this.endGame = new EndGame();
         this.difficulty = new DifficultyGUI();
         this.instructions = new Instructions();
@@ -132,7 +132,7 @@ public class Controller implements ActionListener {
         List<Integer> scores = scoreManager.getHighScores(); // Fetch scores from ScoreManager
         highScores.updateScores(scores); // Update the HighScores UI with the scores
     
-        highScores.getReturnBut().addActionListener(this); // Ensure return button is functional
+        highScores.getReturnButton().addActionListener(this); // Ensure return button is functional
     }
     
 
@@ -241,7 +241,7 @@ public class Controller implements ActionListener {
     }
 
 
-    private int calculatePoints(WordGroup wordGroup) {
+    /*private int calculatePoints(WordGroup wordGroup) {
         switch (wordGroup.getWordDifficulty()) {
             case YELLOW: return 5;
             case GREEN: return 10;
@@ -250,6 +250,7 @@ public class Controller implements ActionListener {
             default: return 0;
         }
     }
+        */
 
     public void setMistakeArray(JLabel[] mistakeArray) {
         this.mistakeArray = mistakeArray;
