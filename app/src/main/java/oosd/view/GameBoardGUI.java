@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -324,63 +326,60 @@ public class GameBoardGUI extends JFrame implements Observer {
         return individualString;
     }
 
-    private String[] randomizeWords(String[] words, WordDifficulty wordDifficulty, int groupNumber) { //move to model?
+    private String[] randomizeWords(WordDifficulty wordDifficulty) {
         Random random = new Random();
-        WordButton[] wordButtons = this.wordButtons;
         HashMap<String, List<String[]>> dictionary = game.getWordDictionary();
-        //System.out.println(words[0].getText());
-        List<String[]> yellowList = dictionary.get("Yellow");
-        List<String[]> greenList = dictionary.get("Green");
-        List<String[]> blueList = dictionary.get("Blue");
-        List<String[]> purpleList = dictionary.get("Purple");
-
-        String yellowCategory = yellowList.get(0)[3];
-        String greenCategory = greenList.get(0)[3];
-        String blueCategory = blueList.get(0)[3];
-        String purpleCategory = purpleList.get(0)[3];
-
-        int yellowIntInRange = random.nextInt(yellowList.size());
-        int greenIntInRange = random.nextInt(greenList.size());
-        int blueIntInRange = random.nextInt(blueList.size());
-        int purpleIntInRange = random.nextInt(purpleList.size());
-        
-        for (int i = 0; i < 4; i++) {
-            //System.out.println("setting text in getWords");
-            
-            String individualString = "not initialized";
-            switch (wordDifficulty) {
-                case WordDifficulty.YELLOW:
-                    individualString = getIndividualWord(yellowList, i, yellowIntInRange);
-                    System.out.println("Yellow Group: " + individualString);
-                    words[i] = individualString;
-                    break;
-                case WordDifficulty.GREEN:
-                    individualString = getIndividualWord(greenList, i, greenIntInRange);
-                    System.out.println("Green Group: " + individualString);
-                    words[i] = individualString;
-                    break;
-                case WordDifficulty.BLUE:
-                    individualString = getIndividualWord(blueList, i, blueIntInRange);
-                    System.out.println("Blue Group: " + individualString);
-                    words[i] = individualString;
-                    break;
-                case WordDifficulty.PURPLE:
-                    individualString = getIndividualWord(purpleList, i, purpleIntInRange);
-                    System.out.println("Purple Group: " + individualString);
-                    words[i] = individualString;
-                    break;
-            }
-            wordButtons[i + (4 * groupNumber)].updateText(individualString); //this should update view
-            //System.out.println(words[i].getText());
+    
+        List<String[]> wordList = null;
+        int indexInRange = 0;
+        String difficultyColor = "";
+    
+        switch (wordDifficulty) {
+            case YELLOW:
+                wordList = dictionary.get("Yellow");
+                indexInRange = random.nextInt(wordList.size());
+                difficultyColor = "Yellow";
+                break;
+            case GREEN:
+                wordList = dictionary.get("Green");
+                indexInRange = random.nextInt(wordList.size());
+                difficultyColor = "Green";
+                break;
+            case BLUE:
+                wordList = dictionary.get("Blue");
+                indexInRange = random.nextInt(wordList.size());
+                difficultyColor = "Blue";
+                break;
+            case PURPLE:
+                wordList = dictionary.get("Purple");
+                indexInRange = random.nextInt(wordList.size());
+                difficultyColor = "Purple";
+                break;
         }
+    
+        String[] words = new String[4];
+    
+        for (int i = 0; i < 4; i++) {
+            String individualString = getIndividualWord(wordList, i, indexInRange);
+            words[i] = individualString;
+        }
+    
+        String categoryName = wordList.get(indexInRange)[3];
+        System.out.println("Difficulty: " + difficultyColor + ", Category: " + categoryName);
+        System.out.println("Words: " + Arrays.toString(words));
+    
         return words;
     }
+    
+    
 
     private WordGrid makeGrid(WordButton[] wordArray) {
         WordGroup[] wordGroups = new WordGroup[4];
-        int wordCount = 0;
+        List<String> allWords = new ArrayList<>();
+    
         for (int i = 0; i < 4; i++) {
             WordDifficulty wordDifficulty = WordDifficulty.YELLOW;
+    
             switch (this.game.getGameDifficulty()) {
                 case EASY:
                     switch (i) {
@@ -427,25 +426,28 @@ public class GameBoardGUI extends JFrame implements Observer {
                     }
                     break;
             }
-            String[] wordArraySubset = new String[4];
-            for (int j = 0; j < 4; j++) {
-                wordArraySubset[j] = wordArray[wordCount].getText();
-                //System.out.println("THE WORD IS "+wordArray[wordCount].getText());
-                wordCount++;
-            }
-            wordArraySubset = randomizeWords(wordArraySubset, wordDifficulty, i); //make this return a randomized string array
+    
+            String[] wordArraySubset = randomizeWords(wordDifficulty);
+    
+            allWords.addAll(Arrays.asList(wordArraySubset));
+    
             WordGroup wordGroup = new WordGroup(wordArraySubset, wordDifficulty);
             wordGroups[i] = wordGroup;
-            //System.out.println("ASSIGNING" + wordArraySubset[0]);
-            //System.out.println("ASSIGNING" + wordGroup.getWordList()[0]);
         }
+    
+        Collections.shuffle(allWords);
+    
+        for (int i = 0; i < allWords.size(); i++) {
+            wordArray[i].updateText(allWords.get(i));
+        }
+    
         WordGrid wordGrid = new WordGrid(wordGroups, wordArray);
-        System.out.println("WORDGROUP 0: "+wordGroups[0].getWordList()[0]);
         game.setWordGroups(wordGroups);
-        System.out.println("FIRST WORD GROUP WORD IS: " + wordGroups[0].getWordList()[0]);
-        //System.out.println("returning the wordGrid that was made");
+    
         return wordGrid;
     }
+    
+
 
 
     private void disableWordGroup(WordGroup wordGroup) {
@@ -518,7 +520,7 @@ public class GameBoardGUI extends JFrame implements Observer {
 
     @Override
     public void update(int matchCount, WordGroup correctWords) {
-        System.out.println("matchCount on view is: " + matchCount);
+        //System.out.println("matchCount on view is: " + matchCount);
         switch(matchCount) {
             case 0:
             case 1:

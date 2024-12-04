@@ -166,7 +166,7 @@ public class Game {
     }
 
     public void notifyObservers(int matchCount, WordGroup correctWords) {
-        System.out.println("# OBSERVERS IS: "+observers.size());
+        //System.out.println("# OBSERVERS IS: "+observers.size());
         for (Observer observer : observers) {
             observer.update(matchCount, correctWords);
             //System.out.println("Observer list: " + observer);
