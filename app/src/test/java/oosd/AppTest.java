@@ -36,6 +36,7 @@ public class AppTest {
         this.menu = new MenuGUI();
         this.controller = new Controller(this.menu);
         this.messageLabel = new JLabel();
+        this.messageLabel.setText("Default Text");
 
         this.wordGroups = new WordGroup[4];
 
@@ -60,6 +61,19 @@ public class AppTest {
         this.controller.handleSubmit();
 
         assertEquals("You must select exactly 4 words.", messageLabel.getText());
+    }
+
+    @Test
+    public void testHandleSubmitValidSubmissionReturnDefaultMessage() {
+        for (int i = 0; i < 4; i++) {
+            WordButton button = new WordButton("test");
+            this.controller.handleButtonClick(button);
+        }
+
+        this.controller.setWordGrid(this.wordGrid);
+        this.controller.handleSubmit();
+
+        assertEquals("Default Text", messageLabel.getText()); //Therefore no others messages
     }
 
     @Test
