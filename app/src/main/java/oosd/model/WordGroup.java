@@ -28,6 +28,10 @@ public class WordGroup {
         return category;
     }
 
+    public void setCatogery(String cateogry) {
+        this.category = cateogry;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
