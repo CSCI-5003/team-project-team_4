@@ -15,6 +15,9 @@ import oosd.view.MenuGUI;
 import oosd.view.WordButton;
 import oosd.view.WordGrid;
 import oosd.model.Game;
+import oosd.model.GameDifficulty;
+import oosd.model.Observer;
+import oosd.model.WordDifficulty;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -37,6 +40,7 @@ public class AppTest {
         this.controller = new Controller(this.menu);
         this.messageLabel = new JLabel();
         this.messageLabel.setText("Default Text");
+        this.game = new Game(GameDifficulty.MEDIUM);
 
         this.wordGroups = new WordGroup[4];
 
@@ -92,6 +96,98 @@ public class AppTest {
         
 
         assertEquals("You've already made this guess!", messageLabel.getText());
+    }
+
+    @Test
+    public void testCheckGuessNothingCorrectReturnZero() {
+        class Obs implements Observer {
+            int matchCount;
+
+            @Override
+            public void update(int matchCount, WordGroup correctWords) {
+                this.matchCount = matchCount;
+            }
+
+            public int getMatchCount() {
+                return this.matchCount;
+            }
+        }
+
+        String[] wordGroupString = new String[4];
+        String[] inputGroupString = new String[4];
+
+        for (int i = 0; i < 4; i++) {
+            wordGroupString[i] = "test";
+            inputGroupString[i] = "different";
+        }
+
+        for (int i = 0; i < 4; i++) {
+            this.wordGroups[i] = new WordGroup(wordGroupString, null);
+        }
+
+        WordGroup inputGroup = new WordGroup(inputGroupString, null);
+        
+        Obs obs = new Obs();
+        this.game.addObserver(obs);
+
+        this.game.setWordGroups(this.wordGroups);
+
+        game.checkGuess(inputGroup);
+
+        assertEquals(obs.getMatchCount(), 0);
+    }
+
+    @Test 
+    public void testCheckGuessAllCorrectReturnCorrectWordGroup() {
+        class Obs implements Observer {
+            int matchCount;
+            WordGroup correctGroup;
+
+            @Override
+            public void update(int matchCount, WordGroup correctWords) {
+                this.matchCount = matchCount;
+                this.correctGroup = correctWords;
+            }
+
+            public int getMatchCount() {
+                return this.matchCount;
+            }
+
+            public WordGroup getCorrectGroup() {
+                return this.correctGroup;
+            }
+        }
+
+        String[] wordGroupString = new String[4];
+        String[] inputGroupString = new String[4];
+
+        for (int i = 0; i < 4; i++) {
+            wordGroupString[i] = "test";
+            inputGroupString[i] = "test";
+        }
+
+        for (int i = 0; i < 4; i++) {
+            this.wordGroups[i] = new WordGroup(wordGroupString, null);
+        }
+
+        WordGroup inputGroup = new WordGroup(inputGroupString, null);
+        
+        Obs obs = new Obs();
+        this.game.addObserver(obs);
+
+        this.game.setWordGroups(this.wordGroups);
+
+        game.checkGuess(inputGroup);
+
+        WordGroup correctWords = obs.getCorrectGroup();
+        String[] correctStringArray = correctWords.getWordList();
+
+        assertEquals(obs.getMatchCount(), 4);
+
+        for (int i = 0; i < 4; i++) {
+            assertEquals(correctStringArray[i], "test");
+        }
+
     }
 
     @After
