@@ -187,7 +187,6 @@ public class AppTest {
         for (int i = 0; i < 4; i++) {
             assertEquals(correctStringArray[i], "test");
         }
-
     }
 
     @After

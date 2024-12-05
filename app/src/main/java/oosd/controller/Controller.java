@@ -125,6 +125,8 @@ public class Controller implements ActionListener {
         this.menu.setVisible(true);
         this.gameBoard.setVisible(false);
         selectedButtons.clear();
+        gameBoard.setScore(0);
+        scoreManager.resetScore();
     }
 
     private void handleReturnButtonHighScores() {
@@ -140,6 +142,8 @@ public class Controller implements ActionListener {
     private void handleReturnButtonEndGame() {
         this.menu.setVisible(true);
         this.endGame.setVisible(false);
+        gameBoard.setScore(0);
+        scoreManager.resetScore();
     }
 
     // menu buttons
@@ -169,6 +173,7 @@ public class Controller implements ActionListener {
         difficulty.setVisible(false);
         game = new Game(GameDifficulty.EASY);
         gameBoard = new GameBoardGUI(GameDifficulty.EASY, this, scoreManager, endGame);
+        gameBoard.setScore(0);
         gameBoard.setVisible(true);
 
         gameBoard.getSubmitBut().addActionListener(this);
@@ -179,6 +184,7 @@ public class Controller implements ActionListener {
         difficulty.setVisible(false);
         game = new Game(GameDifficulty.MEDIUM);
         gameBoard = new GameBoardGUI(GameDifficulty.MEDIUM, this, scoreManager, endGame);
+        gameBoard.setScore(0);
         gameBoard.setVisible(true);
 
         gameBoard.getSubmitBut().addActionListener(this);
@@ -189,6 +195,7 @@ public class Controller implements ActionListener {
         difficulty.setVisible(false);
         game = new Game(GameDifficulty.HARD);
         gameBoard = new GameBoardGUI(GameDifficulty.HARD, this, scoreManager, endGame);
+        gameBoard.setScore(0);
         gameBoard.setVisible(true);
 
         gameBoard.getSubmitBut().addActionListener(this);
@@ -276,7 +283,6 @@ public class Controller implements ActionListener {
         }
     }
     
-
     public void setMistakeArray(JLabel[] mistakeArray) {
         this.mistakeArray = mistakeArray;
     }

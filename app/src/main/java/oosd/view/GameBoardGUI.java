@@ -46,7 +46,7 @@ public class GameBoardGUI extends JFrame implements Observer {
     private WordButton[] buttons;
     private JLabel[] mistakeArray;
 
-    private int MAX_SELECTION = 4;
+    private int MAX_SELECTION;
     private int score;
     private int width;
     private int height;
@@ -80,6 +80,9 @@ public class GameBoardGUI extends JFrame implements Observer {
         height = 95;
         x = new int[]{55,195,335,475,55,195,335,475,55,195,335,475,55,195,335,475};
         y = new int[]{25,25,25,25,130,130,130,130,235,235,235,235,340,340,340,340};
+
+        MAX_SELECTION = 4;
+        score = 0;
 
         this.game = controller.getGame();
         this.game.addObserver(this);
@@ -449,7 +452,8 @@ public class GameBoardGUI extends JFrame implements Observer {
                     categoryColor = ColorCodes.yellow;
                     words[i] = individualString;
                     category = yellowList.get(yellowIntInRange)[3];
-                    //indexInRange = random.nextInt(wordList.size());
+                    wordList = dictionary.get("Yellow");
+                    indexInRange = random.nextInt(wordList.size());
                     break;
                 case WordDifficulty.GREEN:
                     individualString = getIndividualWord(greenList, i, greenIntInRange);
@@ -457,7 +461,8 @@ public class GameBoardGUI extends JFrame implements Observer {
                     categoryColor = ColorCodes.green;
                     words[i] = individualString;
                     category = greenList.get(greenIntInRange)[3];
-                    //indexInRange = random.nextInt(wordList.size());
+                    wordList = dictionary.get("Green");
+                    indexInRange = random.nextInt(wordList.size());
                     break;
                 case WordDifficulty.BLUE:
                     individualString = getIndividualWord(blueList, i, blueIntInRange);
@@ -465,7 +470,8 @@ public class GameBoardGUI extends JFrame implements Observer {
                     categoryColor = ColorCodes.blue;
                     words[i] = individualString;
                     category = blueList.get(blueIntInRange)[3];
-                    //indexInRange = random.nextInt(wordList.size());
+                    wordList = dictionary.get("Blue");
+                    indexInRange = random.nextInt(wordList.size());
                     break;
                 case WordDifficulty.PURPLE:
                     individualString = getIndividualWord(purpleList, i, purpleIntInRange);
@@ -473,14 +479,14 @@ public class GameBoardGUI extends JFrame implements Observer {
                     categoryColor = ColorCodes.purple;
                     words[i] = individualString;
                     category = purpleList.get(purpleIntInRange)[3];
-                    //indexInRange = random.nextInt(wordList.size());
+                    wordList = dictionary.get("Purple");
+                    indexInRange = random.nextInt(wordList.size());
                     break;
             }
             wordButtons[i + (4 * groupNumber)].updateText(individualString); //this should update view
         }
         WordGroup wordGroupRandom = new WordGroup(words, wordDifficulty, category);
         String wordsString = String.join("", words);
-        endGame.setGroupOneAnswers(ColorCodes.blue, category, wordsString);
     //merge mess - fix me
         //String categoryName = wordList.get(indexInRange)[3];
         //System.out.println("Difficulty: " + categoryColor + ", Category: " + categoryName);
@@ -666,7 +672,7 @@ public class GameBoardGUI extends JFrame implements Observer {
                     wordButtons[row3[i]] = wordButtons[toSwap[i]];
                     wordButtons[toSwap[i]] = tempBut;
                 }
-
+                
                 break;
             case 1:
                 for (int i = 0; i < 4; i++) {
@@ -912,4 +918,9 @@ public class GameBoardGUI extends JFrame implements Observer {
         mistakeArray[lives-1].setVisible(false);
         messageLabel.setText(message);
     }
-}    
+
+    public void setScore(int newScore) {
+        score = newScore;
+    }
+
+}
