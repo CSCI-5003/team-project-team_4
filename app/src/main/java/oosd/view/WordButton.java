@@ -15,7 +15,6 @@ public class WordButton extends JButton{
     public WordButton(String defaultText) {
         this.text = defaultText;
         this.setText(defaultText);
-        //System.out.println("updating defaultText: " + this.text);
     }
 
     public String getText() {

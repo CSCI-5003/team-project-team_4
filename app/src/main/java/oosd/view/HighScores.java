@@ -47,6 +47,7 @@ public class HighScores extends JFrame {
         JPanel headingPanel = new JPanel();
         headingPanel.setBackground(ColorCodes.white);
         headingPanel.setLayout(new BoxLayout(headingPanel, BoxLayout.Y_AXIS));
+        headingPanel.setPreferredSize(new Dimension(700, 70));
 
         JLabel title = new JLabel("Connections");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -63,12 +64,14 @@ public class HighScores extends JFrame {
         // Score Panel
         scorePanel = new JPanel();
         scorePanel.setBackground(ColorCodes.white);
-        scorePanel.setLayout(new GridLayout(10, 1, 5, 5)); // Space between rows
+        scorePanel.setLayout(new GridLayout(10, 1, 0,0)); // Space between rows
+        scorePanel.setPreferredSize(new Dimension(700, 550));
 
         // Return Panel
         JPanel returnPanel = new JPanel();
         returnPanel.setBackground(ColorCodes.white);
         returnPanel.setLayout(new BoxLayout(returnPanel, BoxLayout.X_AXIS));
+        returnPanel.setPreferredSize(new Dimension(700, 30));
 
         returnButton = new JButton("Return to Menu");
         returnButton.setFont(new Font("Veranda", Font.PLAIN, 15));
@@ -76,15 +79,17 @@ public class HighScores extends JFrame {
         returnButton.setOpaque(true);
         returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 5));
         returnButton.setForeground(ColorCodes.white);
+        returnButton.setActionCommand("RTM_HighScores");
 
         returnPanel.add(returnButton);
 
         // Add Components to Main Panel
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(headingPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Add spacing
         mainPanel.add(scorePanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Add spacing
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add spacing
         mainPanel.add(returnPanel);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 15))); // Add spacing
 
         // Populate Scores
         updateScores(scoreManager.getHighScores());
@@ -115,7 +120,7 @@ public class HighScores extends JFrame {
         scorePanel.repaint();
     }
 
-    public JButton getReturnButton() {
+    public JButton getReturnBut() {
         return returnButton;
     }
 }

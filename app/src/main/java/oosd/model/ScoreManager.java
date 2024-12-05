@@ -80,7 +80,6 @@ public class ScoreManager {
                 throw new IllegalArgumentException("Unknown difficulty: " + difficulty);
         }
     }
-    
 
     public List<Integer> getHighScores() {
         return highScores;

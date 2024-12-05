@@ -89,7 +89,7 @@ public class AppTest {
             wordGroupString[i] = "test";
         }
 
-        this.wordGroups[0] = new WordGroup(wordGroupString, null);
+        this.wordGroups[0] = new WordGroup(wordGroupString, null, null);
         wordGrid.addGuess(this.wordGroups[0]);
         this.controller.setWordGrid(this.wordGrid);
         this.controller.handleSubmit();
