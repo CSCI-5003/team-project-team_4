@@ -15,13 +15,20 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-public class HighScores extends JFrame{
-    
+import oosd.model.ScoreManager;
+
+public class HighScores extends JFrame {
+
+    private ScoreManager scoreManager;
     private JButton returnButton;
     private JPanel scorePanel;
 
-
-    public HighScores() {
+    public HighScores(ScoreManager scoreManager) {
+        // Initialize ScoreManager
+        if (scoreManager == null) {
+            throw new IllegalArgumentException("ScoreManager cannot be null");
+        }
+        this.scoreManager = scoreManager;
 
         // Create scoreFrame
         this.setTitle("Connections");
@@ -38,34 +45,34 @@ public class HighScores extends JFrame{
 
         // Create Title & Heading
         JPanel headingPanel = new JPanel();
-        headingPanel.setBounds(0,0,700,200);
         headingPanel.setBackground(ColorCodes.white);
         headingPanel.setLayout(new BoxLayout(headingPanel, BoxLayout.Y_AXIS));
+        headingPanel.setPreferredSize(new Dimension(700, 70));
 
         JLabel title = new JLabel("Connections");
-        title.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
-        title.setAlignmentY(Component.CENTER_ALIGNMENT);
         title.setFont(new Font("Verdana", Font.BOLD, 35));
 
         JLabel highScore = new JLabel("High Scores");
-        highScore.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
         highScore.setAlignmentX(Component.CENTER_ALIGNMENT);
-        highScore.setAlignmentY(Component.CENTER_ALIGNMENT);
         highScore.setFont(new Font("Verdana", Font.BOLD, 20));
         highScore.setForeground(ColorCodes.purple);
 
+        headingPanel.add(title);
+        headingPanel.add(highScore);
+
         // Score Panel
         scorePanel = new JPanel();
-        scorePanel.setBounds(0,200,700,500);
         scorePanel.setBackground(ColorCodes.white);
-        scorePanel.setLayout(new GridLayout(10,1));
+        scorePanel.setLayout(new GridLayout(10, 1, 0,0)); // Space between rows
+        scorePanel.setPreferredSize(new Dimension(700, 550));
 
         // Return Panel
         JPanel returnPanel = new JPanel();
-        returnPanel.setLayout(new BoxLayout(returnPanel, BoxLayout.X_AXIS)); 
         returnPanel.setBackground(ColorCodes.white);
-        
+        returnPanel.setLayout(new BoxLayout(returnPanel, BoxLayout.X_AXIS));
+        returnPanel.setPreferredSize(new Dimension(700, 30));
+
         returnButton = new JButton("Return to Menu");
         returnButton.setFont(new Font("Veranda", Font.PLAIN, 15));
         returnButton.setBackground(ColorCodes.purple);
@@ -74,37 +81,41 @@ public class HighScores extends JFrame{
         returnButton.setForeground(ColorCodes.white);
         returnButton.setActionCommand("RTM_HighScores");
 
-        // Fill Panels
-        this.add(mainPanel);
-        mainPanel.add(headingPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        mainPanel.add(scorePanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        mainPanel.add(returnPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 30)));
-
-        headingPanel.add(title);
-        headingPanel.add(highScore);
         returnPanel.add(returnButton);
 
+        // Add Components to Main Panel
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        mainPanel.add(headingPanel);
+        mainPanel.add(scorePanel);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add spacing
+        mainPanel.add(returnPanel);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 15))); // Add spacing
+
+        // Populate Scores
+        updateScores(scoreManager.getHighScores());
+
+        // Set Frame Content
+        this.add(mainPanel);
         this.pack();
         this.setVisible(true);
     }
 
     public void updateScores(List<Integer> scores) {
+        // Clear existing score panel contents
         scorePanel.removeAll();
+        // Populate with scores
         for (int i = 0; i < scores.size(); i++) {
             JLabel scoreLabel = new JLabel("Rank " + (i + 1) + ": " + scores.get(i), SwingConstants.CENTER);
-            scoreLabel.setFont(new Font("Veranda", Font.PLAIN, 15));
-            scoreLabel.setBackground(ColorCodes.white);
+            scoreLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
             scorePanel.add(scoreLabel);
         }
+        // Fill remaining ranks if less than 10
         for (int i = scores.size(); i < 10; i++) {
             JLabel scoreLabel = new JLabel("Rank " + (i + 1) + ": ---", SwingConstants.CENTER);
-            scoreLabel.setFont(new Font("Veranda", Font.PLAIN, 15));
-            scoreLabel.setBackground(ColorCodes.white);
+            scoreLabel.setFont(new Font("Verdana", Font.PLAIN, 15));
             scorePanel.add(scoreLabel);
         }
+        // Refresh UI
         scorePanel.revalidate();
         scorePanel.repaint();
     }

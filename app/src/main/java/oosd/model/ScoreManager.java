@@ -61,6 +61,25 @@ public class ScoreManager {
             e.printStackTrace();
         }
     }
+    
+    public void addPointsByDifficulty(String difficulty) {
+        switch (difficulty) {
+            case "YELLOW":
+                addPoints(5); // Easy difficulty
+                break;
+            case "GREEN":
+                addPoints(10); // Medium difficulty
+                break;
+            case "BLUE":
+                addPoints(15); // Hard difficulty
+                break;
+            case "PURPLE":
+                addPoints(20); // Hardest difficulty
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown difficulty: " + difficulty);
+        }
+    }
 
     public List<Integer> getHighScores() {
         return highScores;

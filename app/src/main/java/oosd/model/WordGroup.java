@@ -39,7 +39,7 @@ public class WordGroup {
 
         WordGroup other = (WordGroup) obj;
 
-        // Sort both word lists and compare them for equality
+        // Sort both word lists and compare them
         String[] thisWords = wordList;
         String[] otherWords = new String[other.wordList.length];
 

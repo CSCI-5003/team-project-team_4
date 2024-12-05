@@ -47,6 +47,8 @@ public class Controller implements ActionListener {
         menu.gethighScoresBut().addActionListener(this);
         menu.getHowToBut().addActionListener(this);
 
+        scoreManager = new ScoreManager();
+
         difficulty = new DifficultyGUI();
         difficulty.setVisible(false);
         difficulty.getEasyBut().addActionListener(this);
@@ -62,11 +64,9 @@ public class Controller implements ActionListener {
         instructions.setVisible(false);
         instructions.getReturnBut().addActionListener(this);
         
-        highScores = new HighScores();
+        highScores = new HighScores(scoreManager);
         highScores.setVisible(false);
         highScores.getReturnBut().addActionListener(this);
-
-        scoreManager = new ScoreManager();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -113,7 +113,6 @@ public class Controller implements ActionListener {
             default:
                 break;
         }
-
     }
 
     // Return Buttons
@@ -159,13 +158,16 @@ public class Controller implements ActionListener {
     
         List<Integer> scores = scoreManager.getHighScores(); // Fetch scores from ScoreManager
         highScores.updateScores(scores); // Update the HighScores UI with the scores
+    
+        highScores.getReturnBut().addActionListener(this); // Ensure return button is functional
+        // Check for duplicate
     }
     
     // difficulty buttons
     private void handleEasy() {
         difficulty.setVisible(false);
         game = new Game(GameDifficulty.EASY);
-        gameBoard = new GameBoardGUI(GameDifficulty.EASY, this, endGame);
+        gameBoard = new GameBoardGUI(GameDifficulty.EASY, this, scoreManager, endGame);
         gameBoard.setVisible(true);
 
         gameBoard.getSubmitBut().addActionListener(this);
@@ -175,7 +177,7 @@ public class Controller implements ActionListener {
     private void handleMedium() {
         difficulty.setVisible(false);
         game = new Game(GameDifficulty.MEDIUM);
-        gameBoard = new GameBoardGUI(GameDifficulty.MEDIUM, this, endGame);
+        gameBoard = new GameBoardGUI(GameDifficulty.MEDIUM, this, scoreManager, endGame);
         gameBoard.setVisible(true);
 
         gameBoard.getSubmitBut().addActionListener(this);
@@ -185,7 +187,7 @@ public class Controller implements ActionListener {
     private void handleHard() {
         difficulty.setVisible(false);
         game = new Game(GameDifficulty.HARD);
-        gameBoard = new GameBoardGUI(GameDifficulty.HARD, this, endGame);
+        gameBoard = new GameBoardGUI(GameDifficulty.HARD, this, scoreManager, endGame);
         gameBoard.setVisible(true);
 
         gameBoard.getSubmitBut().addActionListener(this);
@@ -272,6 +274,7 @@ public class Controller implements ActionListener {
             default: return 0;
         }
     }
+    
 
     public void setMistakeArray(JLabel[] mistakeArray) {
         this.mistakeArray = mistakeArray;

@@ -58,7 +58,7 @@ public class Game {
                 } else {
                     System.out.println("Skipping line " + lineNumber + " due to insufficient columns.");
                 }
-                
+
                 dictionary.put("Yellow", yellowLines);
                 dictionary.put("Green", greenLines);
                 dictionary.put("Blue", blueLines);
@@ -89,9 +89,7 @@ public class Game {
         int matchCount = 0;
         int bestMatchCount = 0;
         WordGroup correctWords = null;       
-        
-        //WordButton[] gridWordList = this.wordGrid.getWordButtons();
-               
+                       
         for (int i = 0; i < inputWordList.length; i++) {
 
             for (int j = 0; j < wordGroups.length; j++) {
@@ -156,10 +154,8 @@ public class Game {
     }
 
     public void notifyObservers(int matchCount, WordGroup correctWords) {
-        System.out.println("# OBSERVERS IS: "+observers.size());
         for (Observer observer : observers) {
             observer.update(matchCount, correctWords);
-            //System.out.println("Observer list: " + observer);
         }
     }
 }

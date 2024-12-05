@@ -4,9 +4,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -23,6 +24,7 @@ import oosd.controller.Controller;
 import oosd.model.Game;
 import oosd.model.GameDifficulty;
 import oosd.model.Observer;
+import oosd.model.ScoreManager;
 import oosd.model.WordDifficulty;
 import oosd.model.WordGroup;
 
@@ -31,19 +33,28 @@ public class GameBoardGUI extends JFrame implements Observer {
     private Controller controller;
     private Game game;
     private EndGame endGame;
+    private ScoreManager scoreManager;
+    private WordGrid wordGrid;
 
     public ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
-    private int MAX_SELECTION = 4;
-
     public ArrayList<JButton> disabledButtons = new ArrayList<>(); // To store disabled buttons
+    public ArrayList<Integer> occupiedButtons = new ArrayList<>();
+    public ArrayList<String> categoryArray = new ArrayList<>();
+    public ArrayList<String> wordArray = new ArrayList<>();
+    
+    private WordButton[] wordButtons;
+    private WordButton[] buttons;
+    private JLabel[] mistakeArray;
+
+    private int MAX_SELECTION = 4;
+    private int score;
+    private int width;
+    private int height;
+    private int[] x;
+    private int[] y;
 
     private JButton returnButton;
     private JButton submit;
-    
-    private WordButton[] buttons;
-    public ArrayList<Integer> occupiedButtons = new ArrayList<>();
-
-    private int score;
 
     private JPanel result1;
     private JLabel category1;
@@ -60,22 +71,11 @@ public class GameBoardGUI extends JFrame implements Observer {
     private JPanel result4;
     private JLabel category4;
     private JLabel words4;
-  
-    WordGrid wordGrid;
-    WordButton[] wordButtons;
-    JLabel messageLabel;
 
-    public ArrayList<String> categoryArray = new ArrayList<>();
-    public ArrayList<String> wordArray = new ArrayList<>();
-    
-    private JLabel[] mistakeArray;
+    private JLabel scoreLabel;
+    private JLabel messageLabel;
 
-    private int width;
-    private int height;
-    private int[] x;
-    private int[] y;
-
-    public GameBoardGUI(GameDifficulty gameDifficulty, Controller controller, EndGame endGame) {
+    public GameBoardGUI(GameDifficulty gameDifficulty, Controller controller, ScoreManager scoreManager, EndGame endGame) {
         width = 130;
         height = 95;
         x = new int[]{55,195,335,475,55,195,335,475,55,195,335,475,55,195,335,475};
@@ -84,6 +84,7 @@ public class GameBoardGUI extends JFrame implements Observer {
         this.game = controller.getGame();
         this.game.addObserver(this);
         this.endGame = endGame;
+        this.scoreManager = scoreManager;
 
         this.controller = controller; // Set the controller immediately
         controller.setMessageLabel(this.messageLabel);
@@ -149,8 +150,6 @@ public class GameBoardGUI extends JFrame implements Observer {
         gridPanel.setPreferredSize(new Dimension(700, 415));
         gridPanel.setLayout(null);
         gridPanel.setBackground(ColorCodes.white);  
-        
-        
 
         this.wordGrid = gridPanel;
 
@@ -243,7 +242,7 @@ public class GameBoardGUI extends JFrame implements Observer {
     //#region <Create Mistake Tracker>
         JPanel mistakePanel = new JPanel();
         mistakePanel.setLayout(new BoxLayout(mistakePanel, BoxLayout.X_AXIS));
-        mistakePanel.setPreferredSize(new Dimension(700, 40));
+        mistakePanel.setPreferredSize(new Dimension(700, 30));
         mistakePanel.setAlignmentY(CENTER_ALIGNMENT);
         mistakePanel.setAlignmentX(CENTER_ALIGNMENT);
         mistakePanel.setBackground(ColorCodes.white);
@@ -286,7 +285,7 @@ public class GameBoardGUI extends JFrame implements Observer {
         
         submit = new JButton("Submit Guess");
         submit.setFont(new Font("Verdana", Font.PLAIN, 15));
-        submit.setPreferredSize(new Dimension(20,50));
+        submit.setPreferredSize(new Dimension(20,40));
         submit.setForeground(ColorCodes.white);
         submit.setBackground(ColorCodes.darkGray);
         submit.setOpaque(true);
@@ -297,12 +296,18 @@ public class GameBoardGUI extends JFrame implements Observer {
         
         returnButton = new JButton("Return to Menu");
         returnButton.setFont(new Font("Veranda", Font.PLAIN, 15));
+        submit.setPreferredSize(new Dimension(15,30));
         returnButton.setBackground(ColorCodes.purple);
         returnButton.setOpaque(true);
         returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 5));
         returnButton.setForeground(ColorCodes.white);
         returnButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         returnButton.setActionCommand("RTM_GameBoard");
+
+        scoreLabel = new JLabel("Score: " + scoreManager.getCurrentScore());
+        scoreLabel.setFont(new Font("Verdana", Font.BOLD, 15));
+        scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
     //#endregion
 
     //#region <Fill Panels>
@@ -329,8 +334,11 @@ public class GameBoardGUI extends JFrame implements Observer {
         mistakePanel.add(life4);
 
         buttonPanel.add(submit);
-        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         buttonPanel.add(returnButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        buttonPanel.add(scoreLabel);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         this.pack();
         this.setVisible(true);
@@ -343,48 +351,123 @@ public class GameBoardGUI extends JFrame implements Observer {
         return individualString;
     }
 
-    private WordGroup randomizeWords(String[] words, WordDifficulty wordDifficulty, int groupNumber) { //move to model?
+    private static void adjustFontSize(WordButton button) {
+        System.out.println("Changing text size of the word: "+ button.getText());
+        String text = button.getText();
+        int buttonWidth = 130;
+        int buttonHeight = 95;
+
+        // Get the button size (if already defined by layout manager)
+        if (button.getPreferredSize() != null) {
+            buttonWidth = button.getPreferredSize().width;
+            buttonHeight = button.getPreferredSize().height;
+        }
+
+        // Set initial font size and calculate
+        Font font = button.getFont();
+        int fontSize = font.getSize();
+
+        while (fontSize > 1) {
+            FontMetrics metrics = button.getFontMetrics(new Font(font.getName(), font.getStyle(), fontSize));
+            int textWidth = metrics.stringWidth(text);
+            int textHeight = metrics.getHeight();
+
+            // Check if text fits within the button dimensions
+            if (textWidth <= buttonWidth - 10 && textHeight <= buttonHeight - 10) {
+                break;
+            }
+
+            // Reduce font size if text does not fit
+            fontSize--;
+        }
+
+        // Apply the adjusted font size
+        button.setFont(new Font(font.getName(), font.getStyle(), fontSize));
+    }
+
+    private WordGroup randomizeWords(String[] words, WordDifficulty wordDifficulty, int groupNumber) {
+        //Random random = new Random();
+        //HashMap<String, List<String[]>> dictionary = game.getWordDictionary();
+       // String category = "not initialized";
+    
+        //List<String[]> wordList = null;
+        //int indexInRange = 0;
+        /*String difficultyColor = "";
+    
+        switch (wordDifficulty) {
+            case YELLOW:
+                wordList = dictionary.get("Yellow");
+                indexInRange = random.nextInt(wordList.size());
+                difficultyColor = "Yellow";
+                break;
+            case GREEN:
+                wordList = dictionary.get("Green");
+                indexInRange = random.nextInt(wordList.size());
+                difficultyColor = "Green";
+                break;
+            case BLUE:
+                wordList = dictionary.get("Blue");
+                indexInRange = random.nextInt(wordList.size());
+                difficultyColor = "Blue";
+                break;
+            case PURPLE:
+                wordList = dictionary.get("Purple");
+                indexInRange = random.nextInt(wordList.size());
+                difficultyColor = "Purple";
+                break;
+        }
+    
+        String[] words = new String[4];*/
+
         Random random = new Random();
         WordButton[] wordButtons = this.wordButtons;
+        
         HashMap<String, List<String[]>> dictionary = game.getWordDictionary();
-
+        
+        int indexInRange = 0;
+        String individualString = "not initialized";
+        Color categoryColor = ColorCodes.lightGray;
         String category = "not initialized";
 
         List<String[]> yellowList = dictionary.get("Yellow");
         List<String[]> greenList = dictionary.get("Green");
         List<String[]> blueList = dictionary.get("Blue");
         List<String[]> purpleList = dictionary.get("Purple");
+        List<String[]> wordList = null;
 
         int yellowIntInRange = random.nextInt(yellowList.size());
         int greenIntInRange = random.nextInt(greenList.size());
         int blueIntInRange = random.nextInt(blueList.size());
         int purpleIntInRange = random.nextInt(purpleList.size());
-        
-        for (int i = 0; i < 4; i++) {
-            String individualString = "not initialized";
 
+
+        for (int i = 0; i < 4; i++) {
             switch (wordDifficulty) {
                 case WordDifficulty.YELLOW:
                     individualString = getIndividualWord(yellowList, i, yellowIntInRange);
                     System.out.println("Yellow Group: " + individualString);
+                    categoryColor = ColorCodes.yellow;
                     words[i] = individualString;
                     category = yellowList.get(yellowIntInRange)[3];
                     break;
                 case WordDifficulty.GREEN:
                     individualString = getIndividualWord(greenList, i, greenIntInRange);
                     System.out.println("Green Group: " + individualString);
+                    categoryColor = ColorCodes.green;
                     words[i] = individualString;
                     category = greenList.get(greenIntInRange)[3];
                     break;
                 case WordDifficulty.BLUE:
                     individualString = getIndividualWord(blueList, i, blueIntInRange);
                     System.out.println("Blue Group: " + individualString);
+                    categoryColor = ColorCodes.blue;
                     words[i] = individualString;
                     category = blueList.get(blueIntInRange)[3];
                     break;
                 case WordDifficulty.PURPLE:
                     individualString = getIndividualWord(purpleList, i, purpleIntInRange);
                     System.out.println("Purple Group: " + individualString);
+                    categoryColor = ColorCodes.purple;
                     words[i] = individualString;
                     category = purpleList.get(purpleIntInRange)[3];
                     break;
@@ -392,14 +475,21 @@ public class GameBoardGUI extends JFrame implements Observer {
             wordButtons[i + (4 * groupNumber)].updateText(individualString); //this should update view
         }
         WordGroup wordGroupRandom = new WordGroup(words, wordDifficulty, category);
-        String wordsString = String.join(" ", words);
+        String wordsString = String.join("", words);
         endGame.setGroupOneAnswers(ColorCodes.blue, category, wordsString);
+    //merge mess - fix me
+        //String categoryName = wordList.get(indexInRange)[3];
+        //System.out.println("Difficulty: " + categoryColor + ", Category: " + categoryName);
+        //System.out.println("Words: " + Arrays.toString(words));
+    
         return wordGroupRandom;
     }
-
+    
     private WordGrid makeGrid(WordButton[] wordArray) {
         WordGroup[] wordGroups = new WordGroup[4];
+        List<String> allWords = new ArrayList<>();
         int wordCount = 0;
+    
         for (int i = 0; i < 4; i++) {
             WordDifficulty wordDifficulty = WordDifficulty.YELLOW;
             //TODO: why^
@@ -457,13 +547,24 @@ public class GameBoardGUI extends JFrame implements Observer {
             WordGroup wordGroup = randomizeWords(wordArraySubset, wordDifficulty, i);
             wordGroups[i] = wordGroup;
         }
+    
+        Collections.shuffle(allWords);
+    
+        for (int i = 0; i < allWords.size(); i++) {
+            wordArray[i].updateText(allWords.get(i));
+            if (i == 15) {
+                wordArray[i].updateText("SUPER-DUPER LONG WORD");
+            }
+            adjustFontSize(wordArray[i]);
+        }
+    
         WordGrid wordGrid = new WordGrid(wordGroups, wordArray);
         game.setWordGroups(wordGroups);
 
-        endGame.setGroupOneAnswers(getColor(wordGroups[0]), wordGroups[0].getCategory(), String.join(", ", wordGroups[0].getWordList()));
-        endGame.setGroupTwoAnswers(getColor(wordGroups[1]), wordGroups[1].getCategory(), String.join(", ", wordGroups[1].getWordList()));
-        endGame.setGroupThreeAnswers(getColor(wordGroups[2]), wordGroups[2].getCategory(), String.join(", ", wordGroups[2].getWordList()));
-        endGame.setGroupFourAnswers(getColor(wordGroups[3]), wordGroups[3].getCategory(), String.join(", ", wordGroups[3].getWordList()));
+        endGame.setGroupOneAnswers(getColor(wordGroups[0]), wordGroups[0].getCategory(), String.join("", wordGroups[0].getWordList()));
+        endGame.setGroupTwoAnswers(getColor(wordGroups[1]), wordGroups[1].getCategory(), String.join("", wordGroups[1].getWordList()));
+        endGame.setGroupThreeAnswers(getColor(wordGroups[2]), wordGroups[2].getCategory(), String.join("", wordGroups[2].getWordList()));
+        endGame.setGroupFourAnswers(getColor(wordGroups[3]), wordGroups[3].getCategory(), String.join("", wordGroups[3].getWordList()));
 
         return wordGrid;
     }
@@ -514,6 +615,7 @@ public class GameBoardGUI extends JFrame implements Observer {
                     wordButtons[toSwap[i]] = tempBut;
                 }
                 break;
+
             case 3:
                 for (int i = 0; i < 4; i++) {
                     toSwap[i] = findWord(wordButtons, correctGuesses[i]);
@@ -535,7 +637,6 @@ public class GameBoardGUI extends JFrame implements Observer {
                     WordButton tempBut = wordButtons[row2[i]];
                     wordButtons[row2[i]] = wordButtons[toSwap[i]];
                     wordButtons[toSwap[i]] = tempBut;
-
                 }
 
                 break;
@@ -603,25 +704,32 @@ public class GameBoardGUI extends JFrame implements Observer {
     }
 
     private void checkWinLose(int lives, int groupsRemaining) {
+
         WordButton[] wordButtons = wordGrid.getWordButtons();
-        
-        
+
         if (groupsRemaining == 0) {
             showEndGame(true);
+            scoreLabel.setText("Score: " + scoreManager.getCurrentScore());
+            scoreManager.saveScore();
             return;
         }
-
         System.out.println("Lives " + lives);
         
         if (lives == 0) {
-            //TODO: somethings wrong here^
-            messageLabel.setText("You lose.");
+            messageLabel.setText("You Lost!");
+            for (int i = 0; i < wordButtons.length; i++) {
+                wordButtons[i].setEnabled(false);
+                scoreLabel.setText("Score: " + scoreManager.getCurrentScore());
+                scoreManager.saveScore();
+            }
             showEndGame(false);
-            return;
+        } else {
+            scoreLabel.setText("Score: " + scoreManager.getCurrentScore()); // Update score label
         }
-        System.out.println(groupsRemaining);
+        System.out.println("groups remaining: " + groupsRemaining);
+        System.out.println("lives left: " + lives);
     }
-
+    
     public JButton getSubmitBut() {
         return submit;
     }
@@ -661,29 +769,21 @@ public class GameBoardGUI extends JFrame implements Observer {
     @Override
     public void update(int matchCount, WordGroup correctWords) {
         System.out.println("matchCount on view is: " + matchCount);
-        //checkWinLose(game.getLives(), game.getGroupsRemaining());
+        checkWinLose(game.getLives(), game.getGroupsRemaining());
         int lives = game.getLives();
         switch(matchCount) {
             case 0:
-                game.decrementLives();
-                mistakeArray[lives-1].setVisible(false);
-                messageLabel.setText("Incorrect, try again.");
+                logIncorrectGuess(lives, "Incorrect, try again.");
                 break;
             case 1:
-                game.decrementLives();
-                mistakeArray[lives-1].setVisible(false);
-                messageLabel.setText("Incorrect, try again.");
+                logIncorrectGuess(lives, "Incorrect, try again.");
                 break;
             case 2:
-                game.decrementLives();
-                mistakeArray[lives-1].setVisible(false);
-                messageLabel.setText("Incorrect, try again.");
+                logIncorrectGuess(lives, "Incorrect, try again.");
                 break;
             case 3:
                 if (game.getLives() != 0) {
-                    messageLabel.setText("One word off.");
-                    game.decrementLives();
-                    mistakeArray[lives-1].setVisible(false);
+                    logIncorrectGuess(lives, "One word off!");
                 }
                 break;
             case 4:
@@ -692,51 +792,44 @@ public class GameBoardGUI extends JFrame implements Observer {
                 String wordsCorrect = String.join(" ", correctWords.getWordList());
                 System.out.println("case 4 words correct: " + wordsCorrect);
                 
-                String diffuculty = correctWords.getWordDifficulty().toString();
-                System.out.println("group diffuculty: " + diffuculty);
+                String difficulty = correctWords.getWordDifficulty().toString();
+                System.out.println("group difficulty: " + difficulty);
 
                 String correctWordString = String.join(" ", correctWords.getWordList());
 
                 String category = correctWords.getCategory();
 
-                Color color = ColorCodes.lightGray;
+                Color color = getColor(correctWords);
 
-                if (diffuculty == "YELLOW") {
-                    color = ColorCodes.yellow;
-                } else if (diffuculty == "GREEN") {
-                    color = ColorCodes.green;
-                } else if (diffuculty == "BLUE") {
-                    color = ColorCodes.blue;
-                } else if (diffuculty == "PURPLE") {
-                    color = ColorCodes.purple;
-                }
+                int points = getPoints(correctWords);
 
                 if (game.getGroupsRemaining() == 1) {
                     messageLabel.setText("You win!");
+                    scoreManager.addPoints(points);
+                    scoreManager.saveScore(); // Save the final score
                     setAnswerBar4(color, category, correctWordString);
-                    //endGame.setGroupFourAnswers(color, category, correctWordString);
                     result4.setVisible(true);
                     game.decrementGroupsRemaining();
 
                 } else if (game.getGroupsRemaining() == 2){
                     messageLabel.setText("Correct!");
+                    scoreManager.addPoints(points);
                     game.decrementGroupsRemaining();
                     setAnswerBar3(color, category, correctWordString);
-                    //endGame.setGroupThreeAnswers(color, category, correctWordString);
                     result3.setVisible(true);
 
                 } else if (game.getGroupsRemaining() == 3){
                     messageLabel.setText("Correct!");
+                    scoreManager.addPoints(points);
                     game.decrementGroupsRemaining();
                     setAnswerBar2(color, category, correctWordString);
-                    //endGame.setGroupTwoAnswers(color, category, correctWordString);
                     result2.setVisible(true);
 
                 } else if (game.getGroupsRemaining() == 4){
                     messageLabel.setText("Correct!");
+                    scoreManager.addPoints(points);
                     game.decrementGroupsRemaining();
                     setAnswerBar1(color, category, correctWordString);
-                    //endGame.setGroupOneAnswers(color, category, correctWordString);
                     result1.setVisible(true);
 
                 }
@@ -761,7 +854,6 @@ public class GameBoardGUI extends JFrame implements Observer {
             String buttonText = buttons[i].getText();
             if (buttonText == word) {
                 buttonID.add(i, buttons[i]);
-              //  occupiedButtons.remove(i);
             } 
         }
 
@@ -775,22 +867,45 @@ public class GameBoardGUI extends JFrame implements Observer {
             endGame.setWinLossMsg("Better Luck Next Time!");
         }
         
-        endGame.setFinalScore(getScore());
+        endGame.setFinalScore(scoreManager.getCurrentScore());
         this.setVisible(false);
         endGame.setVisible(true);
     }
 
     private Color getColor(WordGroup wordGroup) {
-        if (wordGroup.getWordDifficulty().equals(WordDifficulty.YELLOW)) {
-            return ColorCodes.yellow;
-        } else  if (wordGroup.getWordDifficulty().equals(WordDifficulty.GREEN)) {
-            return ColorCodes.green;
-        } else if (wordGroup.getWordDifficulty().equals(WordDifficulty.BLUE)) {
-            return ColorCodes.blue;
-        } else if (wordGroup.getWordDifficulty().equals(WordDifficulty.PURPLE)) {
-            return ColorCodes.purple;
+        switch (wordGroup.getWordDifficulty()) {
+            case YELLOW:
+                return ColorCodes.yellow;
+            case GREEN:
+                return ColorCodes.green;
+            case BLUE:
+                return ColorCodes.blue;
+            case PURPLE:
+                return ColorCodes.purple;
+            default:
+                return ColorCodes.lightGray;
         }
-        return ColorCodes.darkGray;
     }
 
+    private int getPoints(WordGroup wordGroup) {
+        switch (wordGroup.getWordDifficulty()) {
+            case YELLOW:
+                return 5;
+            case GREEN:
+                return 10;
+            case BLUE:
+                return 15;
+            case PURPLE:
+                return 20;
+            default:
+                return 0;
+        }
+    }
+
+    private void logIncorrectGuess(int lives, String message) {
+        game.decrementLives();
+        scoreManager.addPoints(-5);
+        mistakeArray[lives-1].setVisible(false);
+        messageLabel.setText(message);
+    }
 }    

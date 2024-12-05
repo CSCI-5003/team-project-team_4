@@ -37,7 +37,6 @@ public class EndGame extends JFrame {
 
     public EndGame() {
 
-        System.out.println("made it here!");
         // Create menuFrame
         this.setTitle("Connections");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -87,7 +86,7 @@ public class EndGame extends JFrame {
         yourScore.setBorder(BorderFactory.createEmptyBorder(15,5,0,5));
 
         score = new JLabel();
-        score.setText("");
+        score.setText("#");
         score.setAlignmentX(CENTER_ALIGNMENT);
         score.setFont(new Font("Veranda", Font.BOLD, 25));
         score.setBorder(BorderFactory.createEmptyBorder(10,5,5,5));
@@ -202,7 +201,7 @@ public class EndGame extends JFrame {
         answerPanel.add(returnButton);
 
         // Fill Panels
-        
+        this.add(mainPanel);
         mainPanel.add(headingPanel);
         mainPanel.add(resultPanel);
         mainPanel.add(answerPanel);
@@ -216,7 +215,6 @@ public class EndGame extends JFrame {
         
         resultPanel.add(scorePanel);
         returnPanel.add(returnButton);
-        this.add(mainPanel);
 
         this.pack();
     }
@@ -250,6 +248,7 @@ public class EndGame extends JFrame {
         groupFourWords.setText(words);
     }
 
+    // Set EndGame Message and Score
     public void setWinLossMsg(String message) {
         result.setText(message);
     }
