@@ -3,12 +3,86 @@
  */
 package oosd;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+
+import oosd.controller.Controller;
+import oosd.model.WordGroup;
+import oosd.view.MenuGUI;
+import oosd.view.WordButton;
+import oosd.view.WordGrid;
+import oosd.model.Game;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import org.junit.After;
+import org.junit.Before;
+
 public class AppTest {
-    @Test public void appHasAGreeting() {
-        App classUnderTest = new App();
-        //assertNotNull("app should have a greeting", classUnderTest.getGreeting());
+
+    private Controller controller;
+    private MenuGUI menu;
+    private JLabel messageLabel;
+    private WordGrid wordGrid;
+    private WordGroup wordGroups[];
+    private Game game;
+    
+    @Before
+    public void setUp() {
+        this.menu = new MenuGUI();
+        this.controller = new Controller(this.menu);
+        this.messageLabel = new JLabel();
+
+        this.wordGroups = new WordGroup[4];
+
+        this.controller.setMessageLabel(messageLabel);
+        this.wordGrid = new WordGrid(this.wordGroups, new WordButton[16]);
+        
+    }
+
+    @Test
+    public void testHandleSubmitEmptyReturnsSelectWordsMessage() {
+        this.controller.handleSubmit();
+
+        assertEquals("Please select words before submitting.", messageLabel.getText());
+    }
+
+    @Test
+    public void testHandleSubmitLessThanFourReturnsSelectFourWordsMessage() {
+        WordButton button = new WordButton("test");
+        this.controller.handleButtonClick(button);
+
+
+        this.controller.handleSubmit();
+
+        assertEquals("You must select exactly 4 words.", messageLabel.getText());
+    }
+
+    @Test
+    public void testHandleSubmitFourWordsReturnSubmittingGuessMessage() {
+        String[] wordGroupString = new String[4];
+        for (int i = 0; i < 4; i++) {
+            WordButton button = new WordButton("test");
+            this.controller.handleButtonClick(button);
+            wordGroupString[i] = "test";
+        }
+
+        this.wordGroups[0] = new WordGroup(wordGroupString, null);
+        wordGrid.addGuess(this.wordGroups[0]);
+        this.controller.setWordGrid(this.wordGrid);
+        this.controller.handleSubmit();
+        
+
+        assertEquals("You've already made this guess!", messageLabel.getText());
+    }
+
+    @After
+    public void tearDown() {
+        this.messageLabel.setText("");
+        this.controller = null;
     }
 }
