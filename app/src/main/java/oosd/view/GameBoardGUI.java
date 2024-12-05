@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -341,6 +342,40 @@ public class GameBoardGUI extends JFrame implements Observer {
         return individualString;
     }
 
+    private static void adjustFontSize(WordButton button) {
+        System.out.println("Changing text size of the word: "+ button.getText());
+        String text = button.getText();
+        int buttonWidth = 130;
+        int buttonHeight = 95;
+
+        // Get the button size (if already defined by layout manager)
+        if (button.getPreferredSize() != null) {
+            buttonWidth = button.getPreferredSize().width;
+            buttonHeight = button.getPreferredSize().height;
+        }
+
+        // Set initial font size and calculate
+        Font font = button.getFont();
+        int fontSize = font.getSize();
+
+        while (fontSize > 1) {
+            FontMetrics metrics = button.getFontMetrics(new Font(font.getName(), font.getStyle(), fontSize));
+            int textWidth = metrics.stringWidth(text);
+            int textHeight = metrics.getHeight();
+
+            // Check if text fits within the button dimensions
+            if (textWidth <= buttonWidth - 10 && textHeight <= buttonHeight - 10) {
+                break;
+            }
+
+            // Reduce font size if text does not fit
+            fontSize--;
+        }
+
+        // Apply the adjusted font size
+        button.setFont(new Font(font.getName(), font.getStyle(), fontSize));
+    }
+
     private String[] randomizeWords(WordDifficulty wordDifficulty) {
         Random random = new Random();
         HashMap<String, List<String[]>> dictionary = game.getWordDictionary();
@@ -454,6 +489,10 @@ public class GameBoardGUI extends JFrame implements Observer {
     
         for (int i = 0; i < allWords.size(); i++) {
             wordArray[i].updateText(allWords.get(i));
+            if (i == 15) {
+                wordArray[i].updateText("SUPER-DUPER LONG WORD");
+            }
+            adjustFontSize(wordArray[i]);
         }
     
         WordGrid wordGrid = new WordGrid(wordGroups, wordArray);
