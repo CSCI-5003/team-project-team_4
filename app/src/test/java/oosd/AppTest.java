@@ -122,10 +122,10 @@ public class AppTest {
         }
 
         for (int i = 0; i < 4; i++) {
-            this.wordGroups[i] = new WordGroup(wordGroupString, null);
+            this.wordGroups[i] = new WordGroup(wordGroupString, null, null);
         }
 
-        WordGroup inputGroup = new WordGroup(inputGroupString, null);
+        WordGroup inputGroup = new WordGroup(inputGroupString, null, null);
         
         Obs obs = new Obs();
         this.game.addObserver(obs);
@@ -167,10 +167,10 @@ public class AppTest {
         }
 
         for (int i = 0; i < 4; i++) {
-            this.wordGroups[i] = new WordGroup(wordGroupString, null);
+            this.wordGroups[i] = new WordGroup(wordGroupString, null, null);
         }
 
-        WordGroup inputGroup = new WordGroup(inputGroupString, null);
+        WordGroup inputGroup = new WordGroup(inputGroupString, null, null);
         
         Obs obs = new Obs();
         this.game.addObserver(obs);
