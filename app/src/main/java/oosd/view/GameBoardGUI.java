@@ -388,7 +388,7 @@ public class GameBoardGUI extends JFrame implements Observer {
     private WordGroup randomizeWords(String[] words, WordDifficulty wordDifficulty, int groupNumber) {
         //Random random = new Random();
         //HashMap<String, List<String[]>> dictionary = game.getWordDictionary();
-       // String category = "not initialized";
+        // String category = "not initialized";
     
         //List<String[]> wordList = null;
         //int indexInRange = 0;
@@ -449,6 +449,7 @@ public class GameBoardGUI extends JFrame implements Observer {
                     categoryColor = ColorCodes.yellow;
                     words[i] = individualString;
                     category = yellowList.get(yellowIntInRange)[3];
+                    //indexInRange = random.nextInt(wordList.size());
                     break;
                 case WordDifficulty.GREEN:
                     individualString = getIndividualWord(greenList, i, greenIntInRange);
@@ -456,6 +457,7 @@ public class GameBoardGUI extends JFrame implements Observer {
                     categoryColor = ColorCodes.green;
                     words[i] = individualString;
                     category = greenList.get(greenIntInRange)[3];
+                    //indexInRange = random.nextInt(wordList.size());
                     break;
                 case WordDifficulty.BLUE:
                     individualString = getIndividualWord(blueList, i, blueIntInRange);
@@ -463,6 +465,7 @@ public class GameBoardGUI extends JFrame implements Observer {
                     categoryColor = ColorCodes.blue;
                     words[i] = individualString;
                     category = blueList.get(blueIntInRange)[3];
+                    //indexInRange = random.nextInt(wordList.size());
                     break;
                 case WordDifficulty.PURPLE:
                     individualString = getIndividualWord(purpleList, i, purpleIntInRange);
@@ -470,6 +473,7 @@ public class GameBoardGUI extends JFrame implements Observer {
                     categoryColor = ColorCodes.purple;
                     words[i] = individualString;
                     category = purpleList.get(purpleIntInRange)[3];
+                    //indexInRange = random.nextInt(wordList.size());
                     break;
             }
             wordButtons[i + (4 * groupNumber)].updateText(individualString); //this should update view

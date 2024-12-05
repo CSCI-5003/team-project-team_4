@@ -124,6 +124,7 @@ public class Controller implements ActionListener {
     private void handleReturnButtonGameBoard() {
         this.menu.setVisible(true);
         this.gameBoard.setVisible(false);
+        selectedButtons.clear();
     }
 
     private void handleReturnButtonHighScores() {
