@@ -5,14 +5,15 @@ import java.util.Arrays;
 public class WordGroup {
     private String[] wordList;
     private WordDifficulty difficulty;
+    private String category;
 
-    public WordGroup(String[] wordList, WordDifficulty difficulty) {
+    public WordGroup(String[] wordList, WordDifficulty difficulty, String category) {
         if (wordList == null || wordList.length != 4) {
             throw new IllegalArgumentException("WordGroup must contain exactly 4 words.");
         }
-        //System.out.println("WORD LIST ZERO IS " + wordList[0]);
         this.wordList = wordList;
         this.difficulty = difficulty;
+        this.category = category;
     }
 
     public String[] getWordList() {
@@ -21,6 +22,10 @@ public class WordGroup {
 
     public WordDifficulty getWordDifficulty() {
         return this.difficulty;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     @Override
@@ -40,6 +45,7 @@ public class WordGroup {
 
         for (int i = 0; i < wordList.length; i++) {
             thisWords[i] = wordList[i];
+            System.out.println("this words i: " + thisWords[i]);
         }
         for (int i = 0; i < other.wordList.length; i++) {
             otherWords[i] = other.wordList[i];

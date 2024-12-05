@@ -33,7 +33,6 @@ public class Controller implements ActionListener {
     private Instructions instructions;
     private ScoreManager scoreManager;
 
-
     private List<JButton> selectedButtons = new ArrayList<>();
     private JLabel[] mistakeArray;
     private JLabel messageLabel; // Needs to be passed in or initialized
@@ -42,26 +41,32 @@ public class Controller implements ActionListener {
 
     public Controller(MenuGUI menu) {
         
-        this.game = new Game(GameDifficulty.MEDIUM);
         this.menu = new MenuGUI();
-        this.gameBoard = new GameBoardGUI(GameDifficulty.MEDIUM, this);
-        this.highScores = new HighScores();
-        this.scoreManager = new ScoreManager();
-        //this.endGame = new EndGame();
-        this.difficulty = new DifficultyGUI();
-        this.instructions = new Instructions();
+        menu = this.menu;
+        menu.getPlayNowBut().addActionListener(this);
+        menu.gethighScoresBut().addActionListener(this);
+        menu.getHowToBut().addActionListener(this);
 
-        this.gameBoard.setVisible(false);
-        this.highScores.setVisible(false);
-        //this.endGame.setVisible(false);
-        this.difficulty.setVisible(false);
-        this.instructions.setVisible(false);
+        difficulty = new DifficultyGUI();
+        difficulty.setVisible(false);
+        difficulty.getEasyBut().addActionListener(this);
+        difficulty.getMediumBut().addActionListener(this);
+        difficulty.getHardBut().addActionListener(this);
+        difficulty.getReturnBut().addActionListener(this);
+
+        endGame = new EndGame();
+        endGame.setVisible(false);
+        endGame.getReturnBut().addActionListener(this);
+
+        instructions = new Instructions();
+        instructions.setVisible(false);
+        instructions.getReturnBut().addActionListener(this);
         
-        this.menu.getPlayNowBut().addActionListener(this);
-        this.menu.gethighScoresBut().addActionListener(this);
-        this.menu.getHowToBut().addActionListener(this);
+        highScores = new HighScores();
+        highScores.setVisible(false);
+        highScores.getReturnBut().addActionListener(this);
 
-        this.gameBoard.getSubmitBut().addActionListener(this);
+        scoreManager = new ScoreManager();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -87,42 +92,65 @@ public class Controller implements ActionListener {
             case "Hard":
                 handleHard();
                 break;
-            case "Return to Menu":
-                handleReturnButton();
-                break;
             case "Submit":
                 handleSubmit();
+                break;
+            case "RTM_Difficulty":
+                handleReturnButtonDifficulty();
+                break;
+            case "RTM_GameBoard":
+                handleReturnButtonGameBoard();
+                break;
+            case "RTM_HighScores":
+                handleReturnButtonHighScores();
+                break;
+            case "RTM_Instructions":
+                handleReturnButtonInstructions();
+                break;
+            case "RTM_EndGame":
+                handleReturnButtonEndGame();
                 break;
             default:
                 break;
         }
+
     }
 
-    // return buttons
-    private void handleReturnButton() {
+    // Return Buttons
+    private void handleReturnButtonDifficulty() {
         this.menu.setVisible(true);
         this.difficulty.setVisible(false);
+    }
+
+    private void handleReturnButtonGameBoard() {
+        this.menu.setVisible(true);
         this.gameBoard.setVisible(false);
-        //this.endGame.setVisible(false);
+    }
+
+    private void handleReturnButtonHighScores() {
+        this.menu.setVisible(true);
+        this.highScores.setVisible(false);
+    }
+
+    private void handleReturnButtonInstructions() {
+        this.menu.setVisible(true);
         this.instructions.setVisible(false);
-        this.highScores.setVisible(false);   
+    }
+
+    private void handleReturnButtonEndGame() {
+        this.menu.setVisible(true);
+        this.endGame.setVisible(false);
     }
 
     // menu buttons
     private void handlePlayNowBut() {
         menu.setVisible(false);
-        this.difficulty.setVisible(true);
-
-        this.difficulty.getEasyBut().addActionListener(this);
-        this.difficulty.getMediumBut().addActionListener(this);
-        this.difficulty.getHardBut().addActionListener(this);
-        this.difficulty.getReturnBut().addActionListener(this);
+        difficulty.setVisible(true);
     }
 
     private void handleHowToBut() {
         menu.setVisible(false);
-        this.instructions.setVisible(true);
-        this.instructions.getReturnBut().addActionListener(this);
+        instructions.setVisible(true);
     }
 
     private void handleHighScores() {
@@ -131,41 +159,37 @@ public class Controller implements ActionListener {
     
         List<Integer> scores = scoreManager.getHighScores(); // Fetch scores from ScoreManager
         highScores.updateScores(scores); // Update the HighScores UI with the scores
-    
-        highScores.getReturnBut().addActionListener(this); // Ensure return button is functional
     }
     
-
     // difficulty buttons
     private void handleEasy() {
         difficulty.setVisible(false);
-        //GameBoardGUI gameBoard = new GameBoardGUI(GameDifficulty.EASY, this);
-        this.gameBoard = gameBoard;
-        this.gameBoard.setVisible(true);
+        game = new Game(GameDifficulty.EASY);
+        gameBoard = new GameBoardGUI(GameDifficulty.EASY, this, endGame);
+        gameBoard.setVisible(true);
 
-        this.gameBoard.getSubmitBut().addActionListener(this);
-        this.gameBoard.getReturnBut().addActionListener(this);
+        gameBoard.getSubmitBut().addActionListener(this);
+        gameBoard.getReturnBut().addActionListener(this);
     }
 
     private void handleMedium() {
         difficulty.setVisible(false);
-        //GameBoardGUI gameBoard = new GameBoardGUI(GameDifficulty.MEDIUM, this);
-        this.gameBoard = gameBoard;
-        this.gameBoard.setVisible(true);
+        game = new Game(GameDifficulty.MEDIUM);
+        gameBoard = new GameBoardGUI(GameDifficulty.MEDIUM, this, endGame);
+        gameBoard.setVisible(true);
 
-        this.gameBoard.getSubmitBut().addActionListener(this);
-        this.gameBoard.getReturnBut().addActionListener(this);
+        gameBoard.getSubmitBut().addActionListener(this);
+        gameBoard.getReturnBut().addActionListener(this);
     }
 
     private void handleHard() {
         difficulty.setVisible(false);
-        this.gameBoard.setVisible(true);
-        //GameBoardGUI gameBoard = new GameBoardGUI(GameDifficulty.HARD, this);
-        this.gameBoard = gameBoard;
-        this.gameBoard.setVisible(true);
+        game = new Game(GameDifficulty.HARD);
+        gameBoard = new GameBoardGUI(GameDifficulty.HARD, this, endGame);
+        gameBoard.setVisible(true);
 
-        this.gameBoard.getSubmitBut().addActionListener(this);
-        this.gameBoard.getReturnBut().addActionListener(this);
+        gameBoard.getSubmitBut().addActionListener(this);
+        gameBoard.getReturnBut().addActionListener(this);
     }
 
     // Game Board Buttons
@@ -204,13 +228,12 @@ public class Controller implements ActionListener {
     
         try {
             // Create a new WordGroup for the guess
-            //WordButton[] words = new WordButton[selectedButtons.size()];
             String[] words = new String[4];
             for (int i = 0; i < selectedButtons.size(); i++) {
                 words[i] = selectedButtons.get(i).getText();
             }
     
-            WordGroup guess = new WordGroup(words, null);
+            WordGroup guess = new WordGroup(words, null, null);
             System.out.println("Submitting guess: " + guess);
     
             // Clear selection and reset button colors
@@ -239,7 +262,6 @@ public class Controller implements ActionListener {
             e.printStackTrace();
         }
     }
-
 
     private int calculatePoints(WordGroup wordGroup) {
         switch (wordGroup.getWordDifficulty()) {

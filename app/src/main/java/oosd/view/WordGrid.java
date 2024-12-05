@@ -7,19 +7,22 @@ import java.util.ArrayList;
 
 public class WordGrid extends JLayeredPane {
     
-    private WordButton[] buttons = new WordButton[16];
+    private WordButton[] buttons;
     private WordGroup[] wordGroups;
     private ArrayList<WordGroup> alreadyGuessed;
     private int groupsRemaining;
     private int lives;
     
     public WordGrid(WordGroup[] wordGroups, WordButton[] wordButtons) {
-
         this.wordGroups = wordGroups;
         alreadyGuessed = new ArrayList<WordGroup>();
         groupsRemaining = 4;
         lives = 4;
         this.buttons = wordButtons;
+
+        for (int i = 0; i < 16; i++) {
+            this.add(buttons[i]);
+        }
     }
 
     public WordGroup[] getWordGroups() {
@@ -53,4 +56,6 @@ public class WordGrid extends JLayeredPane {
     public WordButton[] getWordButtons() {
         return this.buttons;
     }
+
+    
 }

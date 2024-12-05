@@ -57,6 +57,7 @@ public class Instructions extends JFrame {
         returnButton.setOpaque(true);
         returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 5));
         returnButton.setForeground(Color.white);
+        returnButton.setActionCommand("RTM_Instructions");
 
         this.add(instructionPanel);
         instructionPanel.add(imgPanel);

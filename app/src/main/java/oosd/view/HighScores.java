@@ -72,6 +72,7 @@ public class HighScores extends JFrame{
         returnButton.setOpaque(true);
         returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 5));
         returnButton.setForeground(ColorCodes.white);
+        returnButton.setActionCommand("RTM_HighScores");
 
         // Fill Panels
         this.add(mainPanel);

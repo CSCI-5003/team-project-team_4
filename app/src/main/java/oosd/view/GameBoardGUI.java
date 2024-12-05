@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -29,11 +30,18 @@ public class GameBoardGUI extends JFrame implements Observer {
 
     private Controller controller;
     private Game game;
+    private EndGame endGame;
 
     public ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
     private int MAX_SELECTION = 4;
+
+    public ArrayList<JButton> disabledButtons = new ArrayList<>(); // To store disabled buttons
+
     private JButton returnButton;
     private JButton submit;
+    
+    private WordButton[] buttons;
+    public ArrayList<Integer> occupiedButtons = new ArrayList<>();
 
     private int score;
 
@@ -52,204 +60,211 @@ public class GameBoardGUI extends JFrame implements Observer {
     private JPanel result4;
     private JLabel category4;
     private JLabel words4;
-
-    
+  
     WordGrid wordGrid;
     WordButton[] wordButtons;
     JLabel messageLabel;
+
+    public ArrayList<String> categoryArray = new ArrayList<>();
+    public ArrayList<String> wordArray = new ArrayList<>();
     
-        private JLabel[] mistakeArray;
+    private JLabel[] mistakeArray;
+
+    private int width;
+    private int height;
+    private int[] x;
+    private int[] y;
+
+    public GameBoardGUI(GameDifficulty gameDifficulty, Controller controller, EndGame endGame) {
+        width = 130;
+        height = 95;
+        x = new int[]{55,195,335,475,55,195,335,475,55,195,335,475,55,195,335,475};
+        y = new int[]{25,25,25,25,130,130,130,130,235,235,235,235,340,340,340,340};
+
+        this.game = controller.getGame();
+        this.game.addObserver(this);
+        this.endGame = endGame;
+
+        this.controller = controller; // Set the controller immediately
+        controller.setMessageLabel(this.messageLabel);
+                        
+        // Create mainFrame
+        this.setTitle("Connections");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setPreferredSize(new Dimension(700, 800));
+        this.setResizable(false);
+    
+        // Create mainPanel
+        JPanel mainPanel = new JPanel();
+        mainPanel.setPreferredSize(new Dimension(700, 800));
+        mainPanel.setBackground(ColorCodes.white);
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 20));
         
-        public GameBoardGUI(GameDifficulty gameDifficulty, Controller controller) {
-            this.game = controller.getGame();
-            this.game.addObserver(this);
+    //#region <Create Title & Heading>
+        JPanel headingPanel = new JPanel();
+        headingPanel.setPreferredSize(new Dimension(700, 130));
+        headingPanel.setBackground(ColorCodes.white);
+        headingPanel.setLayout(new BoxLayout(headingPanel, BoxLayout.Y_AXIS));
 
-            this.controller = controller; // Set the controller immediately
-            controller.setMessageLabel(this.messageLabel);
-            
-            //game = new Game(gameDifficulty);
-            
-            // Create mainFrame
-            this.setTitle("Connections");
-            this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            this.setPreferredSize(new Dimension(700, 800));
-            this.setResizable(false);
+        JLabel title = new JLabel("Connections");
+        title.setBorder(BorderFactory.createEmptyBorder(25, 0,0,0));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        title.setFont(new Font("Verdana", Font.BOLD, 35));
     
-            // Create mainPanel
-            JPanel mainPanel = new JPanel();
-            mainPanel.setPreferredSize(new Dimension(700, 800));
-            mainPanel.setBackground(ColorCodes.white);
-            mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-            mainPanel.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 20));
-            
-            // Create Title & Heading
-            JPanel headingPanel = new JPanel();
-            headingPanel.setPreferredSize(new Dimension(700, 130));
-            headingPanel.setBackground(ColorCodes.white);
-            headingPanel.setLayout(new BoxLayout(headingPanel, BoxLayout.Y_AXIS));
-    
-            JLabel title = new JLabel("Connections");
-            title.setBorder(BorderFactory.createEmptyBorder(25, 0,0,0));
-            title.setAlignmentX(Component.CENTER_ALIGNMENT);
-            title.setFont(new Font("Verdana", Font.BOLD, 35));
-    
-            JLabel instructions = new JLabel("Create Groups of Four!");
-            instructions.setAlignmentX(Component.CENTER_ALIGNMENT);
-            instructions.setFont(new Font("Verdana", Font.BOLD, 20));
-            instructions.setForeground(ColorCodes.purple);
-    
-            JLabel messageLabel = new JLabel();
-            this.messageLabel = messageLabel;
-            messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            messageLabel.setFont(new Font("Verdana", Font.BOLD, 15));
-            messageLabel.setBorder(BorderFactory.createEmptyBorder(15,0,5,0));
-            messageLabel.setForeground(ColorCodes.darkGray);
-            messageLabel.setText("Message to User");
+        JLabel instructions = new JLabel("Create Groups of Four!");
+        instructions.setAlignmentX(Component.CENTER_ALIGNMENT);
+        instructions.setFont(new Font("Verdana", Font.BOLD, 20));
+        instructions.setForeground(ColorCodes.purple);
 
-            this.controller.setMessageLabel(this.messageLabel);
+        JLabel messageLabel = new JLabel();
+        this.messageLabel = messageLabel;
+        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        messageLabel.setFont(new Font("Verdana", Font.BOLD, 15));
+        messageLabel.setBorder(BorderFactory.createEmptyBorder(15,0,5,0));
+        messageLabel.setForeground(ColorCodes.darkGray);
+        messageLabel.setText("");
 
-            // Create Word Grid
-            int width = 130;
-            int height = 95;
-            int[] x = new int[]{55,195,335,475,55,195,335,475,55,195,335,475,55,195,335,475};
-            int[] y = new int[]{25,25,25,25,130,130,130,130,235,235,235,235,340,340,340,340};
-    
-            WordButton[] buttons = new WordButton[16];
-            this.wordButtons = buttons;
-    
-            for (int i = 0; i < 16; i++) {
-                String word = "Word " + i;
-                buttons[i] = new WordButton(String.valueOf(word));
-                buttons[i].setEnabled(true);
-                buttons[i].setBounds(x[i], y[i], width, height);
-                buttons[i].setOpaque(true);
-                buttons[i].setBorderPainted(false);
-                buttons[i].setBackground(ColorCodes.lightGray);
-    
-                buttons[i].addActionListener(e -> controller.handleButtonClick((WordButton) e.getSource()));
-            }
-    
-            WordGrid gridPanel = makeGrid(buttons);
-            gridPanel.setPreferredSize(new Dimension(700, 415));
-            gridPanel.setLayout(null);
-            gridPanel.setBackground(ColorCodes.white);  
-            
-            for (int i = 0; i < 16; i++) {
-                gridPanel.add(buttons[i]);
-            }
-    
-            this.wordGrid = gridPanel;
+        this.controller.setMessageLabel(this.messageLabel);
+    //#endregion
 
+    //#region <Create Word Grid>
+        buttons = new WordButton[16];
+        this.wordButtons = buttons;
 
-            // Pass the initialized wordGrid to the Controller
-            controller.setWordGrid(this.wordGrid);
+        for (int i = 0; i < 16; i++) {
+            String word = "Word " + i;
+            buttons[i] = new WordButton(String.valueOf(word));
+            buttons[i].setEnabled(true);
+            buttons[i].setBounds(x[i], y[i], width, height);
+            buttons[i].setOpaque(true);
+            buttons[i].setBorderPainted(false);
+            buttons[i].setBackground(ColorCodes.lightGray);
+
+            buttons[i].addActionListener(e -> controller.handleButtonClick((WordButton) e.getSource()));
+            occupiedButtons.add(i);
+        }
+
+        WordGrid gridPanel = makeGrid(buttons);
+        gridPanel.setPreferredSize(new Dimension(700, 415));
+        gridPanel.setLayout(null);
+        gridPanel.setBackground(ColorCodes.white);  
+        
+        
+
+        this.wordGrid = gridPanel;
+
+        // Pass the initialized wordGrid to the Controller
+        controller.setWordGrid(this.wordGrid);
+    //#endregion
+
+    //#region <Create Result Bars>
+        // Result One
+        result1 = new JPanel();
+        result1.setBackground(ColorCodes.yellow);
+        result1.setBounds(55,25,550,95);
+        result1.setLayout(new BoxLayout(result1, BoxLayout.Y_AXIS));
+        result1.setVisible(false);
+
+        category1 = new JLabel();
+        category1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        category1.setFont(new Font("Veranda", Font.BOLD, 20));
+        
+        words1 = new JLabel();
+        words1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        words1.setFont(new Font("Veranda", Font.PLAIN, 15));
+
+        result1.add(Box.createRigidArea(new Dimension(0, 20)));
+        result1.add(category1);
+        result1.add(Box.createRigidArea(new Dimension(0, 10)));
+        result1.add(words1);
+
+        // Result Two
+        result2 = new JPanel();
+        result2.setBackground(ColorCodes.green);
+        result2.setBounds(55,130,550,95);
+        result2.setLayout(new BoxLayout(result2, BoxLayout.Y_AXIS));
+        result2.setVisible(false);
+
+        category2 = new JLabel();
+        category2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        category2.setFont(new Font("Veranda", Font.BOLD, 20));
+        
+        words2 = new JLabel();
+        words2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        words2.setFont(new Font("Veranda", Font.PLAIN, 15));
+
+        result2.add(Box.createRigidArea(new Dimension(0, 20)));
+        result2.add(category2);
+        result2.add(Box.createRigidArea(new Dimension(0, 10)));
+        result2.add(words2);
+
+        // Result Three
+        result3 = new JPanel();
+        result3.setBackground(ColorCodes.blue);
+        result3.setBounds(55,235,550,95);
+        result3.setLayout(new BoxLayout(result3, BoxLayout.Y_AXIS));
+        result3.setVisible(false);
+
+        category3 = new JLabel();
+        category3.setAlignmentX(Component.CENTER_ALIGNMENT);
+        category3.setFont(new Font("Veranda", Font.BOLD, 20));
+        
+        words3 = new JLabel();
+        words3.setAlignmentX(Component.CENTER_ALIGNMENT);
+        words3.setFont(new Font("Veranda", Font.PLAIN, 15));
+
+        result3.add(Box.createRigidArea(new Dimension(0, 20)));
+        result3.add(category3);
+        result3.add(Box.createRigidArea(new Dimension(0, 10)));
+        result3.add(words3);
+
+        // Result 4
+        result4 = new JPanel();
+        result4.setBackground(ColorCodes.purple);
+        result4.setBounds(55,340,550,95);
+        result4.setLayout(new BoxLayout(result4, BoxLayout.Y_AXIS));
+        result4.setVisible(false);
+
+        category4 = new JLabel();
+        category4.setAlignmentX(Component.CENTER_ALIGNMENT);
+        category4.setFont(new Font("Veranda", Font.BOLD, 20));
+        
+        words4 = new JLabel();
+        words4.setAlignmentX(Component.CENTER_ALIGNMENT);
+        words4.setFont(new Font("Veranda", Font.PLAIN, 15));
+
+        result4.add(Box.createRigidArea(new Dimension(0, 20)));
+        result4.add(category4);
+        result4.add(Box.createRigidArea(new Dimension(0, 10)));
+        result4.add(words4);
+    //#endregion
     
-            // Create Result Bars
-            // Result One
-            result1 = new JPanel();
-            result1.setBackground(ColorCodes.yellow);
-            result1.setBounds(55,25,550,95);
-            result1.setLayout(new BoxLayout(result1, BoxLayout.Y_AXIS));
-            result1.setVisible(false);
+    //#region <Create Mistake Tracker>
+        JPanel mistakePanel = new JPanel();
+        mistakePanel.setLayout(new BoxLayout(mistakePanel, BoxLayout.X_AXIS));
+        mistakePanel.setPreferredSize(new Dimension(700, 40));
+        mistakePanel.setAlignmentY(CENTER_ALIGNMENT);
+        mistakePanel.setAlignmentX(CENTER_ALIGNMENT);
+        mistakePanel.setBackground(ColorCodes.white);
+        
+        JLabel mistakes = new JLabel("Mistakes Remaining: ");
+        mistakes.setFont(new Font("Verdana", Font.PLAIN, 15));
+
+        JLabel[] mistakeArray = new JLabel[4];
+        this.mistakeArray = mistakeArray;
     
-            category1 = new JLabel();
-            category1.setAlignmentX(Component.CENTER_ALIGNMENT);
-            category1.setFont(new Font("Veranda", Font.BOLD, 20));
-            
-            words1 = new JLabel();
-            words1.setAlignmentX(Component.CENTER_ALIGNMENT);
-            words1.setFont(new Font("Veranda", Font.PLAIN, 15));
-    
-            result1.add(Box.createRigidArea(new Dimension(0, 20)));
-            result1.add(category1);
-            result1.add(Box.createRigidArea(new Dimension(0, 10)));
-            result1.add(words1);
-    
-            // Result Two
-            result2 = new JPanel();
-            result2.setBackground(ColorCodes.green);
-            result2.setBounds(55,130,550,95);
-            result2.setLayout(new BoxLayout(result2, BoxLayout.Y_AXIS));
-            result2.setVisible(false);
-    
-            category2 = new JLabel();
-            category2.setAlignmentX(Component.CENTER_ALIGNMENT);
-            category2.setFont(new Font("Veranda", Font.BOLD, 20));
-            
-            words2 = new JLabel();
-            words2.setAlignmentX(Component.CENTER_ALIGNMENT);
-            words2.setFont(new Font("Veranda", Font.PLAIN, 15));
-    
-            result2.add(Box.createRigidArea(new Dimension(0, 20)));
-            result2.add(category2);
-            result2.add(Box.createRigidArea(new Dimension(0, 10)));
-            result2.add(words2);
-    
-            // Result Three
-            result3 = new JPanel();
-            result3.setBackground(ColorCodes.blue);
-            result3.setBounds(55,235,550,95);
-            result3.setLayout(new BoxLayout(result3, BoxLayout.Y_AXIS));
-            result3.setVisible(false);
-    
-            category3 = new JLabel();
-            category3.setAlignmentX(Component.CENTER_ALIGNMENT);
-            category3.setFont(new Font("Veranda", Font.BOLD, 20));
-            
-            words3 = new JLabel();
-            words3.setAlignmentX(Component.CENTER_ALIGNMENT);
-            words3.setFont(new Font("Veranda", Font.PLAIN, 15));
-    
-            result3.add(Box.createRigidArea(new Dimension(0, 20)));
-            result3.add(category3);
-            result3.add(Box.createRigidArea(new Dimension(0, 10)));
-            result3.add(words3);
-    
-            // Result 4
-            result4 = new JPanel();
-            result4.setBackground(ColorCodes.purple);
-            result4.setBounds(55,340,550,95);
-            result4.setLayout(new BoxLayout(result4, BoxLayout.Y_AXIS));
-            result4.setVisible(false);
-    
-            category4 = new JLabel();
-            category4.setAlignmentX(Component.CENTER_ALIGNMENT);
-            category4.setFont(new Font("Veranda", Font.BOLD, 20));
-            
-            words4 = new JLabel();
-            words4.setAlignmentX(Component.CENTER_ALIGNMENT);
-            words4.setFont(new Font("Veranda", Font.PLAIN, 15));
-    
-            result4.add(Box.createRigidArea(new Dimension(0, 20)));
-            result4.add(category4);
-            result4.add(Box.createRigidArea(new Dimension(0, 10)));
-            result4.add(words4);
-    
-            // Create Mistake Tracker
-            JPanel mistakePanel = new JPanel();
-            mistakePanel.setLayout(new BoxLayout(mistakePanel, BoxLayout.X_AXIS));
-            mistakePanel.setPreferredSize(new Dimension(700, 40));
-            mistakePanel.setAlignmentY(CENTER_ALIGNMENT);
-            mistakePanel.setAlignmentX(CENTER_ALIGNMENT);
-            mistakePanel.setBackground(ColorCodes.white);
-            
-            JLabel mistakes = new JLabel("Mistakes Remaining: ");
-            mistakes.setFont(new Font("Verdana", Font.PLAIN, 15));
-    
-            JLabel[] mistakeArray = new JLabel[4];
-            this.mistakeArray = mistakeArray;
-      
-            JLabel life1 = new JLabel(" ⏺");
-            JLabel life2 = new JLabel(" ⏺");
-            JLabel life3 = new JLabel(" ⏺");
-            JLabel life4 = new JLabel(" ⏺");
-    
-            mistakeArray[0] = life1;
-            mistakeArray[1] = life2;
-            mistakeArray[2] = life3;
-            mistakeArray[3] = life4;
-    
-            controller.setMistakeArray(this.mistakeArray);
+        JLabel life1 = new JLabel(" ⏺");
+        JLabel life2 = new JLabel(" ⏺");
+        JLabel life3 = new JLabel(" ⏺");
+        JLabel life4 = new JLabel(" ⏺");
+
+        mistakeArray[0] = life1;
+        mistakeArray[1] = life2;
+        mistakeArray[2] = life3;
+        mistakeArray[3] = life4;
+
+        controller.setMistakeArray(this.mistakeArray);
 
         life1.setFont(new Font("Verdana", Font.PLAIN, 42));
         life2.setFont(new Font("Verdana", Font.PLAIN, 42));
@@ -260,8 +275,9 @@ public class GameBoardGUI extends JFrame implements Observer {
         life2.setForeground(ColorCodes.darkGray);
         life3.setForeground(ColorCodes.darkGray);
         life4.setForeground(ColorCodes.darkGray);
+    //#endregion
 
-        // Create Submit & Return Buttons
+    //#region <Create Submit & Return Buttons>
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setPreferredSize(new Dimension(700, 120));
@@ -286,8 +302,10 @@ public class GameBoardGUI extends JFrame implements Observer {
         returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 5));
         returnButton.setForeground(ColorCodes.white);
         returnButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        returnButton.setActionCommand("RTM_GameBoard");
+    //#endregion
 
-        // Fill Panels
+    //#region <Fill Panels>
         this.add(mainPanel);
         mainPanel.add(headingPanel, JLayeredPane.DEFAULT_LAYER);
         mainPanel.add(gridPanel, JLayeredPane.DEFAULT_LAYER);
@@ -316,6 +334,7 @@ public class GameBoardGUI extends JFrame implements Observer {
 
         this.pack();
         this.setVisible(true);
+    //#endregion
     }
 
     private String getIndividualWord( List<String[]> colorList, int i, int randomIntInRange) {
@@ -324,20 +343,17 @@ public class GameBoardGUI extends JFrame implements Observer {
         return individualString;
     }
 
-    private String[] randomizeWords(String[] words, WordDifficulty wordDifficulty, int groupNumber) { //move to model?
+    private WordGroup randomizeWords(String[] words, WordDifficulty wordDifficulty, int groupNumber) { //move to model?
         Random random = new Random();
         WordButton[] wordButtons = this.wordButtons;
         HashMap<String, List<String[]>> dictionary = game.getWordDictionary();
-        //System.out.println(words[0].getText());
+
+        String category = "not initialized";
+
         List<String[]> yellowList = dictionary.get("Yellow");
         List<String[]> greenList = dictionary.get("Green");
         List<String[]> blueList = dictionary.get("Blue");
         List<String[]> purpleList = dictionary.get("Purple");
-
-        String yellowCategory = yellowList.get(0)[3];
-        String greenCategory = greenList.get(0)[3];
-        String blueCategory = blueList.get(0)[3];
-        String purpleCategory = purpleList.get(0)[3];
 
         int yellowIntInRange = random.nextInt(yellowList.size());
         int greenIntInRange = random.nextInt(greenList.size());
@@ -345,35 +361,40 @@ public class GameBoardGUI extends JFrame implements Observer {
         int purpleIntInRange = random.nextInt(purpleList.size());
         
         for (int i = 0; i < 4; i++) {
-            //System.out.println("setting text in getWords");
-            
             String individualString = "not initialized";
+
             switch (wordDifficulty) {
                 case WordDifficulty.YELLOW:
                     individualString = getIndividualWord(yellowList, i, yellowIntInRange);
                     System.out.println("Yellow Group: " + individualString);
                     words[i] = individualString;
+                    category = yellowList.get(yellowIntInRange)[3];
                     break;
                 case WordDifficulty.GREEN:
                     individualString = getIndividualWord(greenList, i, greenIntInRange);
                     System.out.println("Green Group: " + individualString);
                     words[i] = individualString;
+                    category = greenList.get(greenIntInRange)[3];
                     break;
                 case WordDifficulty.BLUE:
                     individualString = getIndividualWord(blueList, i, blueIntInRange);
                     System.out.println("Blue Group: " + individualString);
                     words[i] = individualString;
+                    category = blueList.get(blueIntInRange)[3];
                     break;
                 case WordDifficulty.PURPLE:
                     individualString = getIndividualWord(purpleList, i, purpleIntInRange);
                     System.out.println("Purple Group: " + individualString);
                     words[i] = individualString;
+                    category = purpleList.get(purpleIntInRange)[3];
                     break;
             }
             wordButtons[i + (4 * groupNumber)].updateText(individualString); //this should update view
-            //System.out.println(words[i].getText());
         }
-        return words;
+        WordGroup wordGroupRandom = new WordGroup(words, wordDifficulty, category);
+        String wordsString = String.join(" ", words);
+        endGame.setGroupOneAnswers(ColorCodes.blue, category, wordsString);
+        return wordGroupRandom;
     }
 
     private WordGrid makeGrid(WordButton[] wordArray) {
@@ -381,6 +402,7 @@ public class GameBoardGUI extends JFrame implements Observer {
         int wordCount = 0;
         for (int i = 0; i < 4; i++) {
             WordDifficulty wordDifficulty = WordDifficulty.YELLOW;
+            //TODO: why^
             switch (this.game.getGameDifficulty()) {
                 case EASY:
                     switch (i) {
@@ -430,23 +452,21 @@ public class GameBoardGUI extends JFrame implements Observer {
             String[] wordArraySubset = new String[4];
             for (int j = 0; j < 4; j++) {
                 wordArraySubset[j] = wordArray[wordCount].getText();
-                //System.out.println("THE WORD IS "+wordArray[wordCount].getText());
                 wordCount++;
             }
-            wordArraySubset = randomizeWords(wordArraySubset, wordDifficulty, i); //make this return a randomized string array
-            WordGroup wordGroup = new WordGroup(wordArraySubset, wordDifficulty);
+            WordGroup wordGroup = randomizeWords(wordArraySubset, wordDifficulty, i);
             wordGroups[i] = wordGroup;
-            //System.out.println("ASSIGNING" + wordArraySubset[0]);
-            //System.out.println("ASSIGNING" + wordGroup.getWordList()[0]);
         }
         WordGrid wordGrid = new WordGrid(wordGroups, wordArray);
-        System.out.println("WORDGROUP 0: "+wordGroups[0].getWordList()[0]);
         game.setWordGroups(wordGroups);
-        System.out.println("FIRST WORD GROUP WORD IS: " + wordGroups[0].getWordList()[0]);
-        //System.out.println("returning the wordGrid that was made");
+
+        endGame.setGroupOneAnswers(getColor(wordGroups[0]), wordGroups[0].getCategory(), String.join(", ", wordGroups[0].getWordList()));
+        endGame.setGroupTwoAnswers(getColor(wordGroups[1]), wordGroups[1].getCategory(), String.join(", ", wordGroups[1].getWordList()));
+        endGame.setGroupThreeAnswers(getColor(wordGroups[2]), wordGroups[2].getCategory(), String.join(", ", wordGroups[2].getWordList()));
+        endGame.setGroupFourAnswers(getColor(wordGroups[3]), wordGroups[3].getCategory(), String.join(", ", wordGroups[3].getWordList()));
+
         return wordGrid;
     }
-
 
     private void disableWordGroup(WordGroup wordGroup) {
         String[] wordStrings = wordGroup.getWordList();
@@ -458,26 +478,148 @@ public class GameBoardGUI extends JFrame implements Observer {
             for (int j = 0; j < wordButtons.length; j++) {
                 if (disableWord.equals(wordButtons[j].getText())) {
                     wordButtons[j].setEnabled(false);
+                    wordButtons[j].setText(null);
+                    disabledButtons.add(wordButtons[j]);
                 }
             }
         }
     }
 
-    private void checkLoss(int lives) {
-        WordButton[] wordButtons = wordGrid.getWordButtons();
-        //System.out.println(lives);
-        
-        if (lives == 0) { //for deliverable 3, add word group reveal
-            messageLabel.setText("You lose.");
-            for (int i = 0; i < wordButtons.length; i++) {
-                wordButtons[i].setEnabled(false);
+    public void moveWords(WordGroup wordGroup, int groupsRemaining) {
+        String[] correctGuesses = wordGroup.getWordList();
+        WordButton[] wordButtons = this.wordGrid.getWordButtons();
+        int[] toSwap = new int[4];
+
+        switch (groupsRemaining) {
+            case 4:
+                for (int i = 0; i < 4; i++) {
+                    toSwap[i] = findWord(wordButtons, correctGuesses[i]);
+                }
+                int[] row1 = {0, 1, 2, 3};
+
+                for (int i = 0; i < 4; i++) {
+                    wordButtons[toSwap[i]].setBounds(x[row1[i]], y[row1[i]], width, height);
+                    wordButtons[row1[i]].setBounds(x[toSwap[i]], y[toSwap[i]], width, height);
+
+                    int tempx = x[row1[i]];
+                    x[row1[i]] = x[toSwap[i]];
+                    x[toSwap[i]] = tempx;
+
+                    int tempy = y[row1[i]];
+                    y[row1[i]] = y[toSwap[i]];
+                    y[toSwap[i]] = tempy;
+
+                    WordButton tempBut = wordButtons[row1[i]];
+                    wordButtons[row1[i]] = wordButtons[toSwap[i]];
+                    wordButtons[toSwap[i]] = tempBut;
+                }
+                break;
+            case 3:
+                for (int i = 0; i < 4; i++) {
+                    toSwap[i] = findWord(wordButtons, correctGuesses[i]);
+                }
+                int[] row2 = {4, 5, 6, 7};
+
+                for (int i = 0; i < 4; i++) {
+                    wordButtons[toSwap[i]].setBounds(x[row2[i]], y[row2[i]], width, height);
+                    wordButtons[row2[i]].setBounds(x[toSwap[i]], y[toSwap[i]], width, height);
+
+                    int tempx = x[row2[i]];
+                    x[row2[i]] = x[toSwap[i]];
+                    x[toSwap[i]] = tempx;
+
+                    int tempy = y[row2[i]];
+                    y[row2[i]] = y[toSwap[i]];
+                    y[toSwap[i]] = tempy;
+
+                    WordButton tempBut = wordButtons[row2[i]];
+                    wordButtons[row2[i]] = wordButtons[toSwap[i]];
+                    wordButtons[toSwap[i]] = tempBut;
+
+                }
+
+                break;
+            case 2:
+                for (int i = 0; i < 4; i++) {
+                    toSwap[i] = findWord(wordButtons, correctGuesses[i]);
+                }
+                int[] row3 = {8, 9, 10, 11};
+
+                for (int i = 0; i < 4; i++) {
+                    wordButtons[toSwap[i]].setBounds(x[row3[i]], y[row3[i]], width, height);
+                    wordButtons[row3[i]].setBounds(x[toSwap[i]], y[toSwap[i]], width, height);
+
+                    int tempx = x[row3[i]];
+                    x[row3[i]] = x[toSwap[i]];
+                    x[toSwap[i]] = tempx;
+
+                    int tempy = y[row3[i]];
+                    y[row3[i]] = y[toSwap[i]];
+                    y[toSwap[i]] = tempy;
+
+                    WordButton tempBut = wordButtons[row3[i]];
+                    wordButtons[row3[i]] = wordButtons[toSwap[i]];
+                    wordButtons[toSwap[i]] = tempBut;
+                }
+
+                break;
+            case 1:
+                for (int i = 0; i < 4; i++) {
+                    toSwap[i] = findWord(wordButtons, correctGuesses[i]);
+                }
+                int[] row4 = {12, 13, 14, 15};
+
+                for (int i = 0; i < 4; i++) {
+                    wordButtons[toSwap[i]].setBounds(x[row4[i]], y[row4[i]], width, height);
+                    wordButtons[row4[i]].setBounds(x[toSwap[i]], y[toSwap[i]], width, height);
+                    
+                    int tempx = x[row4[i]];
+                    x[row4[i]] = x[toSwap[i]];
+                    x[toSwap[i]] = tempx;
+
+                    int tempy = y[row4[i]];
+                    y[row4[i]] = y[toSwap[i]];
+                    y[toSwap[i]] = tempy;
+
+                    WordButton tempBut = wordButtons[row4[i]];
+                    wordButtons[row4[i]] = wordButtons[toSwap[i]];
+                    wordButtons[toSwap[i]] = tempBut;
+                }
+
+                break;
+            default:
+                break;
+        }
+    }
+    
+    private int findWord(WordButton[] wordButtons, String findMe) {
+        for (int i = 0; i < 16; i++) {
+            String word = wordButtons[i].getText();
+            if (word.equals(findMe)) {
+                return i;
             }
-        } else {
-            messageLabel.setText("Incorrect, try again.");
-            game.decrementLives();
+        }
+        return -1;
+    }
+
+    private void checkWinLose(int lives, int groupsRemaining) {
+        WordButton[] wordButtons = wordGrid.getWordButtons();
+        
+        
+        if (groupsRemaining == 0) {
+            showEndGame(true);
+            return;
         }
 
-        mistakeArray[lives].setVisible(false);
+        System.out.println("Lives " + lives);
+        
+        if (lives == 0) {
+            //TODO: somethings wrong here^
+            messageLabel.setText("You lose.");
+            showEndGame(false);
+            return;
+        }
+        System.out.println(groupsRemaining);
     }
 
     public JButton getSubmitBut() {
@@ -515,39 +657,140 @@ public class GameBoardGUI extends JFrame implements Observer {
         category4.setText(category);
         words4.setText(words);
     }
-
+    
     @Override
     public void update(int matchCount, WordGroup correctWords) {
         System.out.println("matchCount on view is: " + matchCount);
+        //checkWinLose(game.getLives(), game.getGroupsRemaining());
+        int lives = game.getLives();
         switch(matchCount) {
             case 0:
+                game.decrementLives();
+                mistakeArray[lives-1].setVisible(false);
+                messageLabel.setText("Incorrect, try again.");
+                break;
             case 1:
+                game.decrementLives();
+                mistakeArray[lives-1].setVisible(false);
+                messageLabel.setText("Incorrect, try again.");
+                break;
             case 2:
-                checkLoss(game.getLives() - 1);
+                game.decrementLives();
+                mistakeArray[lives-1].setVisible(false);
+                messageLabel.setText("Incorrect, try again.");
                 break;
             case 3:
-                // wordGrid.decrementLives();
                 if (game.getLives() != 0) {
                     messageLabel.setText("One word off.");
-                    //wordGrid.decrementLives();
                     game.decrementLives();
-                    mistakeArray[game.getLives()].setVisible(false);
-
-                } else {
-                    checkLoss(game.getLives() - 1);
+                    mistakeArray[lives-1].setVisible(false);
                 }
                 break;
             case 4:
-                //wordGrid.decrementGroupsRemaining();
                 disableWordGroup(correctWords); //pass the words to get disabled
-                System.out.println("groups remaining = " + game.getGroupsRemaining());
+                moveWords(correctWords, game.getGroupsRemaining());
+                String wordsCorrect = String.join(" ", correctWords.getWordList());
+                System.out.println("case 4 words correct: " + wordsCorrect);
+                
+                String diffuculty = correctWords.getWordDifficulty().toString();
+                System.out.println("group diffuculty: " + diffuculty);
+
+                String correctWordString = String.join(" ", correctWords.getWordList());
+
+                String category = correctWords.getCategory();
+
+                Color color = ColorCodes.lightGray;
+
+                if (diffuculty == "YELLOW") {
+                    color = ColorCodes.yellow;
+                } else if (diffuculty == "GREEN") {
+                    color = ColorCodes.green;
+                } else if (diffuculty == "BLUE") {
+                    color = ColorCodes.blue;
+                } else if (diffuculty == "PURPLE") {
+                    color = ColorCodes.purple;
+                }
+
                 if (game.getGroupsRemaining() == 1) {
                     messageLabel.setText("You win!");
-                } else {
+                    setAnswerBar4(color, category, correctWordString);
+                    //endGame.setGroupFourAnswers(color, category, correctWordString);
+                    result4.setVisible(true);
+                    game.decrementGroupsRemaining();
+
+                } else if (game.getGroupsRemaining() == 2){
                     messageLabel.setText("Correct!");
                     game.decrementGroupsRemaining();
+                    setAnswerBar3(color, category, correctWordString);
+                    //endGame.setGroupThreeAnswers(color, category, correctWordString);
+                    result3.setVisible(true);
+
+                } else if (game.getGroupsRemaining() == 3){
+                    messageLabel.setText("Correct!");
+                    game.decrementGroupsRemaining();
+                    setAnswerBar2(color, category, correctWordString);
+                    //endGame.setGroupTwoAnswers(color, category, correctWordString);
+                    result2.setVisible(true);
+
+                } else if (game.getGroupsRemaining() == 4){
+                    messageLabel.setText("Correct!");
+                    game.decrementGroupsRemaining();
+                    setAnswerBar1(color, category, correctWordString);
+                    //endGame.setGroupOneAnswers(color, category, correctWordString);
+                    result1.setVisible(true);
+
                 }
+                System.out.println("groups remaining = " + game.getGroupsRemaining());
                 break;
         }
+        checkWinLose(game.getLives(), game.getGroupsRemaining());
     }
+
+    public static void printButtonListWithPositions(ArrayList<String> buttonList) {
+        for (int i = 0; i < buttonList.size(); i++) {
+            String button = buttonList.get(i);
+            System.out.println("Position " + i + ": " + button); 
+        }
+    }
+
+    public ArrayList<JButton> getButton(String word) {
+
+        ArrayList<JButton> buttonID = new ArrayList<>();
+
+        for (int i = 0; i < 16; i++) {
+            String buttonText = buttons[i].getText();
+            if (buttonText == word) {
+                buttonID.add(i, buttons[i]);
+              //  occupiedButtons.remove(i);
+            } 
+        }
+
+        return buttonID;
+    }
+
+    private void showEndGame(boolean win) {
+        if (win) {
+            endGame.setWinLossMsg("Congratulations!");
+        } else {
+            endGame.setWinLossMsg("Better Luck Next Time!");
+        }
+        
+        endGame.setFinalScore(getScore());
+        this.setVisible(false);
+        endGame.setVisible(true);
+    }
+
+    private Color getColor(WordGroup wordGroup) {
+        if (wordGroup.getWordDifficulty().equals(WordDifficulty.YELLOW)) {
+            return ColorCodes.yellow;
+        } else  if (wordGroup.getWordDifficulty().equals(WordDifficulty.GREEN)) {
+            return ColorCodes.green;
+        } else if (wordGroup.getWordDifficulty().equals(WordDifficulty.BLUE)) {
+            return ColorCodes.blue;
+        } else if (wordGroup.getWordDifficulty().equals(WordDifficulty.PURPLE)) {
+            return ColorCodes.purple;
+        }
+        return ColorCodes.darkGray;
+    }
+
 }    

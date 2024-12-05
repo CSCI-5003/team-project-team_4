@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 public class DifficultyGUI extends JFrame {
     
     private DifficultyGUI difficulty;
-    private GameBoardGUI game;
     private JButton returnButton;
     private JButton easy;
     private JButton medium;
@@ -95,6 +94,7 @@ public class DifficultyGUI extends JFrame {
         returnButton.setOpaque(true);
         returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.purple, 5));
         returnButton.setForeground(ColorCodes.white);
+        returnButton.setActionCommand("RTM_Difficulty");
 
         // Fill Panels
         this.add(mainPanel);

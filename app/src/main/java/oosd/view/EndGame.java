@@ -1,5 +1,6 @@
 package oosd.view;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,18 +13,36 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class EndGame extends JFrame{
+public class EndGame extends JFrame {
     
     private JButton returnButton;
 
+    private JPanel groupOnePanel;
+    private JPanel groupTwoPanel;
+    private JPanel groupThreePanel;
+    private JPanel groupFourPanel;
+
+    private JLabel groupOneCategory;
+    private JLabel groupTwoCategory;
+    private JLabel groupThreeCategory;
+    private JLabel groupFourCategory;
+
+    private JLabel groupOneWords;
+    private JLabel groupTwoWords;
+    private JLabel groupThreeWords;
+    private JLabel groupFourWords;
+
+    private JLabel result;
+    private JLabel score;
+
     public EndGame() {
 
+        System.out.println("made it here!");
         // Create menuFrame
-        JFrame frame = new JFrame();
-        frame.setTitle("Connections");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(700, 800));
-        frame.setResizable(false);
+        this.setTitle("Connections");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setPreferredSize(new Dimension(700, 800));
+        this.setResizable(false);
 
         // Create mainPanel
         JPanel mainPanel = new JPanel();
@@ -55,9 +74,8 @@ public class EndGame extends JFrame{
         scorePanel.setBackground(ColorCodes.lightPurple);
         scorePanel.setLayout(new BoxLayout(scorePanel, BoxLayout.Y_AXIS));
 
-        JLabel result = new JLabel();
-        result.setText("Congratulations!");
-        result.setText("Better Luck Next Time!");
+        result = new JLabel();
+        result.setText("");
         result.setAlignmentX(CENTER_ALIGNMENT);
         result.setFont(new Font("Veranda", Font.BOLD, 35));
         result.setBorder(BorderFactory.createEmptyBorder(25,5,5,5));
@@ -68,8 +86,8 @@ public class EndGame extends JFrame{
         yourScore.setFont(new Font("Veranda", Font.BOLD, 20));
         yourScore.setBorder(BorderFactory.createEmptyBorder(15,5,0,5));
 
-        JLabel score = new JLabel();
-        score.setText("46");
+        score = new JLabel();
+        score.setText("");
         score.setAlignmentX(CENTER_ALIGNMENT);
         score.setFont(new Font("Veranda", Font.BOLD, 25));
         score.setBorder(BorderFactory.createEmptyBorder(10,5,5,5));
@@ -83,90 +101,85 @@ public class EndGame extends JFrame{
         answerPanel.setLayout(null);
         answerPanel.setBackground(ColorCodes.white);
 
-        // Yellow
-        JPanel yellowPanel = new JPanel();
-        yellowPanel.setBackground(ColorCodes.yellow);
-        yellowPanel.setBounds(175,0,300,75);
-        yellowPanel.setLayout(new BoxLayout(yellowPanel, BoxLayout.Y_AXIS));
+        // One
+        groupOnePanel = new JPanel();
+        groupOnePanel.setBounds(175,0,300,75);
+        groupOnePanel.setLayout(new BoxLayout(groupOnePanel, BoxLayout.Y_AXIS));
         
-        JLabel yellowCategory = new JLabel();
-        yellowCategory.setAlignmentX(Component.CENTER_ALIGNMENT);
-        yellowCategory.setText("FOOD-RELATED JUMBLES");
-        yellowCategory.setFont(new Font("Veranda", Font.BOLD, 15));
+        groupOneCategory = new JLabel();
+        groupOneCategory.setAlignmentX(Component.CENTER_ALIGNMENT);
+        groupOneCategory.setText("category placeholder 1");
+        groupOneCategory.setFont(new Font("Veranda", Font.BOLD, 15));
         
-        JLabel yellowWords = new JLabel();
-        yellowWords.setAlignmentX(Component.CENTER_ALIGNMENT);
-        yellowWords.setText("HASH, SALAD, SCRAMBLE, STEW");
-        yellowWords.setFont(new Font("Veranda", Font.PLAIN, 12));
+        groupOneWords = new JLabel();
+        groupOneWords.setAlignmentX(Component.CENTER_ALIGNMENT);
+        groupOneWords.setText("words placeholder 1");
+        groupOneWords.setFont(new Font("Veranda", Font.PLAIN, 12));
 
-        yellowPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        yellowPanel.add(yellowCategory);
-        yellowPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        yellowPanel.add(yellowWords);
+        groupOnePanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        groupOnePanel.add(groupOneCategory);
+        groupOnePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        groupOnePanel.add(groupOneWords);
 
+        // Two
+        groupTwoPanel = new JPanel();
+        groupTwoPanel.setBounds(175,90,300,75);
+        groupTwoPanel.setLayout(new BoxLayout(groupTwoPanel, BoxLayout.Y_AXIS));
 
-        // Green
-        JPanel greenPanel = new JPanel();
-        greenPanel.setBackground(ColorCodes.green);
-        greenPanel.setBounds(175,90,300,75);
-        greenPanel.setLayout(new BoxLayout(greenPanel, BoxLayout.Y_AXIS));
-
-        JLabel greenCategory = new JLabel();
-        greenCategory.setAlignmentX(Component.CENTER_ALIGNMENT);
-        greenCategory.setText("PUBLIC STANDING");
-        greenCategory.setFont(new Font("Veranda", Font.BOLD, 15));
+        groupTwoCategory = new JLabel();
+        groupTwoCategory.setAlignmentX(Component.CENTER_ALIGNMENT);
+        groupTwoCategory.setText("category placeholder 2");
+        groupTwoCategory.setFont(new Font("Veranda", Font.BOLD, 15));
         
-        JLabel greenWords = new JLabel();
-        greenWords.setAlignmentX(Component.CENTER_ALIGNMENT);
-        greenWords.setText("CHARACTER, IMAGE, NAME, REPUTATION");
-        greenWords.setFont(new Font("Veranda", Font.PLAIN, 12));
+        groupTwoWords = new JLabel();
+        groupTwoWords.setAlignmentX(Component.CENTER_ALIGNMENT);
+        groupTwoWords.setText("words placeholder 2");
+        groupTwoWords.setFont(new Font("Veranda", Font.PLAIN, 12));
 
-        greenPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        greenPanel.add(greenCategory);
-        greenPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        greenPanel.add(greenWords);
+        groupTwoPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        groupTwoPanel.add(groupTwoCategory);
+        groupTwoPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        groupTwoPanel.add(groupTwoWords);
 
-        // Blue
-        JPanel bluePanel = new JPanel();
-        bluePanel.setBackground(ColorCodes.blue);
-        bluePanel.setBounds(175,180,300,75);
-        bluePanel.setLayout(new BoxLayout(bluePanel, BoxLayout.Y_AXIS));
+        // Three
+        groupThreePanel = new JPanel();
+        groupThreePanel.setBounds(175,180,300,75);
+        groupThreePanel.setLayout(new BoxLayout(groupThreePanel, BoxLayout.Y_AXIS));
 
-        JLabel blueCategory = new JLabel();
-        blueCategory.setAlignmentX(Component.CENTER_ALIGNMENT);
-        blueCategory.setText("INFO ON A MUSEUM PLACARD");
-        blueCategory.setFont(new Font("Veranda", Font.BOLD, 15));
+        groupThreeCategory = new JLabel();
+        groupThreeCategory.setAlignmentX(Component.CENTER_ALIGNMENT);
+        groupThreeCategory.setText("category placeholder 3");
+        groupThreeCategory.setFont(new Font("Veranda", Font.BOLD, 15));
         
-        JLabel blueWords = new JLabel();
-        blueWords.setAlignmentX(Component.CENTER_ALIGNMENT);
-        blueWords.setText("ARTIST, MEDIUM, TITLE, YEAR");
-        blueWords.setFont(new Font("Veranda", Font.PLAIN, 12));
+        groupThreeWords = new JLabel();
+        groupThreeWords.setAlignmentX(Component.CENTER_ALIGNMENT);
+        groupThreeWords.setText("words placeholder 3");
+        groupThreeWords.setFont(new Font("Veranda", Font.PLAIN, 12));
 
-        bluePanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        bluePanel.add(blueCategory);
-        bluePanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        bluePanel.add(blueWords);
+        groupThreePanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        groupThreePanel.add(groupThreeCategory);
+        groupThreePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        groupThreePanel.add(groupThreeWords);
 
-        // Purple
-        JPanel purplePanel = new JPanel();
-        purplePanel.setBackground(ColorCodes.purple);
-        purplePanel.setBounds(175,270,300,75);
-        purplePanel.setLayout(new BoxLayout(purplePanel, BoxLayout.Y_AXIS));
+        // Four
+        groupFourPanel = new JPanel();
+        groupFourPanel.setBounds(175,270,300,75);
+        groupFourPanel.setLayout(new BoxLayout(groupFourPanel, BoxLayout.Y_AXIS));
 
-        JLabel purpleCategory = new JLabel();
-        purpleCategory.setAlignmentX(Component.CENTER_ALIGNMENT);
-        purpleCategory.setText("ANAGRAMS OF FAMOUS PAINTERS");
-        purpleCategory.setFont(new Font("Veranda", Font.BOLD, 15));
+        groupFourCategory = new JLabel();
+        groupFourCategory.setAlignmentX(Component.CENTER_ALIGNMENT);
+        groupFourCategory.setText("category placeholder 4");
+        groupFourCategory.setFont(new Font("Veranda", Font.BOLD, 15));
         
-        JLabel purpleWords = new JLabel();
-        purpleWords.setAlignmentX(Component.CENTER_ALIGNMENT);
-        purpleWords.setText("DIAL, EGADS, MONTE, YOGA");
-        purpleWords.setFont(new Font("Veranda", Font.PLAIN, 12));
+        groupFourWords = new JLabel();
+        groupFourWords.setAlignmentX(Component.CENTER_ALIGNMENT);
+        groupFourWords.setText("words placeholder 4");
+        groupFourWords.setFont(new Font("Veranda", Font.PLAIN, 12));
 
-        purplePanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        purplePanel.add(purpleCategory);
-        purplePanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        purplePanel.add(purpleWords);
+        groupFourPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        groupFourPanel.add(groupFourCategory);
+        groupFourPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        groupFourPanel.add(groupFourWords);
 
         // Return Panel
         JPanel returnPanel = new JPanel();
@@ -180,15 +193,16 @@ public class EndGame extends JFrame{
         returnButton.setOpaque(true);
         returnButton.setBorder(BorderFactory.createLineBorder(ColorCodes.darkGray, 5));
         returnButton.setForeground(ColorCodes.lightGray);
+        returnButton.setActionCommand("RTM_EndGame");
 
-        answerPanel.add(yellowPanel);
-        answerPanel.add(greenPanel);
-        answerPanel.add(bluePanel);
-        answerPanel.add(purplePanel);
+        answerPanel.add(groupOnePanel);
+        answerPanel.add(groupTwoPanel);
+        answerPanel.add(groupThreePanel);
+        answerPanel.add(groupFourPanel);
         answerPanel.add(returnButton);
 
         // Fill Panels
-        frame.add(mainPanel);
+        
         mainPanel.add(headingPanel);
         mainPanel.add(resultPanel);
         mainPanel.add(answerPanel);
@@ -202,12 +216,46 @@ public class EndGame extends JFrame{
         
         resultPanel.add(scorePanel);
         returnPanel.add(returnButton);
+        this.add(mainPanel);
 
-        frame.pack();
-        frame.setVisible(true);
+        this.pack();
     }
 
     public JButton getReturnBut() {
         return returnButton;
+    }
+
+    // Set Answer Bars
+    public void setGroupOneAnswers(Color color, String category, String words) {
+        groupOnePanel.setBackground(color);
+        groupOneCategory.setText(category);
+        groupOneWords.setText(words);
+    }
+
+    public void setGroupTwoAnswers(Color color, String category, String words) {
+        groupTwoPanel.setBackground(color);
+        groupTwoCategory.setText(category);
+        groupTwoWords.setText(words);
+    }
+
+    public void setGroupThreeAnswers(Color color, String category, String words) {
+        groupThreePanel.setBackground(color);
+        groupThreeCategory.setText(category);
+        groupThreeWords.setText(words);
+    }
+
+    public void setGroupFourAnswers(Color color, String category, String words) {
+        groupFourPanel.setBackground(color);
+        groupFourCategory.setText(category);
+        groupFourWords.setText(words);
+    }
+
+    public void setWinLossMsg(String message) {
+        result.setText(message);
+    }
+
+    public void setFinalScore(int playerScore) {
+        String stringScore = String.valueOf(playerScore);
+        score.setText(stringScore);
     }
 }

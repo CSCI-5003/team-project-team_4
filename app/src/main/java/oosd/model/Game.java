@@ -19,6 +19,7 @@ public class Game {
     private WordGroup[] wordGroups;
     private int lives;
     private int groupsRemaining;
+    private String category;
 
     public Game(GameDifficulty gameDifficulty) {
         this.gameDifficulty = gameDifficulty;
@@ -40,8 +41,8 @@ public class Game {
             int lineNumber = 0;
             reader.readNext();
             while ((line = reader.readNext()) != null) {
+                category = line[3];
                 lineNumber++;
-                
                 
                 String color = line[2].trim(); 
                 if (line.length > 2) {
@@ -57,22 +58,12 @@ public class Game {
                 } else {
                     System.out.println("Skipping line " + lineNumber + " due to insufficient columns.");
                 }
-                //System.out.println("Yellow Lines:");
-                //printLines(yellowLines);
+                
                 dictionary.put("Yellow", yellowLines);
-
-                //System.out.println("\nGreen Lines:");
-                //printLines(greenLines);
                 dictionary.put("Green", greenLines);
-
-                //System.out.println("\nBlue Lines:");
-                //printLines(blueLines);
                 dictionary.put("Blue", blueLines);
-
-                //System.out.println("\nPurple Lines:");
-                //printLines(purpleLines);
                 dictionary.put("Purple", purpleLines);
-                }
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,26 +72,26 @@ public class Game {
         }
     }
 
+    public String getCategory() {
+        return category;
+    }
+
     private static void printLines(List<String[]> lines) {
         for (String[] line : lines) {
             System.out.println(String.join(", ", line));
         }
     }
-
-    
-
+ 
     public void checkGuess(WordGroup inputWordGroup) {
         WordGroup[] wordGroups = this.wordGroups;
         String[] inputWordList = inputWordGroup.getWordList();
 
         int matchCount = 0;
         int bestMatchCount = 0;
-        WordGroup correctWords = null;
-        
+        WordGroup correctWords = null;       
         
         //WordButton[] gridWordList = this.wordGrid.getWordButtons();
-        
-        
+               
         for (int i = 0; i < inputWordList.length; i++) {
 
             for (int j = 0; j < wordGroups.length; j++) {
@@ -126,10 +117,9 @@ public class Game {
                     correctWords = wordGroups[j];
                 }
                     
-                }
             }
+        }
 
-        
         notifyObservers(bestMatchCount, correctWords);
     }
 
