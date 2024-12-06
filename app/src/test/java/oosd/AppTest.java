@@ -3,12 +3,208 @@
  */
 package oosd;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+
+import oosd.controller.Controller;
+import oosd.model.WordGroup;
+import oosd.view.MenuGUI;
+import oosd.view.WordButton;
+import oosd.view.WordGrid;
+import oosd.model.Game;
+import oosd.model.GameDifficulty;
+import oosd.model.Observer;
+import oosd.model.WordDifficulty;
+import java.awt.event.ActionEvent;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import org.junit.After;
+import org.junit.Before;
+
 public class AppTest {
-    @Test public void appHasAGreeting() {
-        App classUnderTest = new App();
-        assertNotNull("app should have a greeting", classUnderTest.getGreeting());
+
+    private Controller controller;
+    private MenuGUI menu;
+    private JLabel messageLabel;
+    private WordGrid wordGrid;
+    private WordGroup wordGroups[];
+    private Game game;
+    private WordButton[] wordButtons;
+    
+    @Before
+    public void setUp() {
+        this.menu = new MenuGUI();
+        this.controller = new Controller(this.menu);
+        this.messageLabel = new JLabel();
+        this.messageLabel.setText("Default Text");
+        this.game = new Game(GameDifficulty.MEDIUM);
+        
+
+        this.wordGroups = new WordGroup[4];
+
+        this.controller.setMessageLabel(messageLabel);
+
+        WordButton[] wordButtons = new WordButton[16];
+        this.wordButtons = wordButtons;
+
+        for (int i = 0; i < 16; i++) {
+            wordButtons[i] = new WordButton("test");
+        }
+
+        this.wordGrid = new WordGrid(this.wordGroups, wordButtons);
+        
+    }
+
+    @Test
+    public void testHandleSubmitEmptyReturnsSelectWordsMessage() {
+        this.controller.handleSubmit();
+
+        assertEquals("Please select words before submitting.", messageLabel.getText());
+    }
+
+    @Test
+    public void testHandleSubmitLessThanFourReturnsSelectFourWordsMessage() {
+        WordButton button = new WordButton("test");
+        this.controller.handleButtonClick(button);
+
+
+        this.controller.handleSubmit();
+
+        assertEquals("You must select exactly 4 words.", messageLabel.getText());
+    }
+
+    @Test
+    public void testHandleSubmitValidSubmissionReturnDefaultMessage() {
+        for (int i = 0; i < 4; i++) {
+            WordButton button = new WordButton("test");
+            this.controller.handleButtonClick(button);
+        }
+
+        controller.actionPerformed(new ActionEvent( this, ActionEvent.ACTION_PERFORMED, "Medium"));
+
+        this.controller.setWordGrid(this.wordGrid);
+        this.controller.handleSubmit();
+
+        assertEquals("Default Text", messageLabel.getText()); //Therefore no others messages
+    }
+
+    @Test
+    public void testHandleSubmitFourWordsReturnSubmittingGuessMessage() {
+        String[] wordGroupString = new String[4];
+        for (int i = 0; i < 4; i++) {
+            WordButton button = new WordButton("test");
+            this.controller.handleButtonClick(button);
+            wordGroupString[i] = "test";
+        }
+
+        this.wordGroups[0] = new WordGroup(wordGroupString, null, null);
+        wordGrid.addGuess(this.wordGroups[0]);
+        this.controller.setWordGrid(this.wordGrid);
+        this.controller.handleSubmit();
+        
+
+        assertEquals("You've already made this guess!", messageLabel.getText());
+    }
+
+    @Test
+    public void testCheckGuessNothingCorrectReturnZero() {
+        class Obs implements Observer {
+            int matchCount;
+
+            @Override
+            public void update(int matchCount, WordGroup correctWords) {
+                this.matchCount = matchCount;
+            }
+
+            public int getMatchCount() {
+                return this.matchCount;
+            }
+        }
+
+        String[] wordGroupString = new String[4];
+        String[] inputGroupString = new String[4];
+
+        for (int i = 0; i < 4; i++) {
+            wordGroupString[i] = "test";
+            inputGroupString[i] = "different";
+        }
+
+        for (int i = 0; i < 4; i++) {
+            this.wordGroups[i] = new WordGroup(wordGroupString, null, null);
+        }
+
+        WordGroup inputGroup = new WordGroup(inputGroupString, null, null);
+        
+        Obs obs = new Obs();
+        this.game.addObserver(obs);
+
+        this.game.setWordGroups(this.wordGroups);
+
+        game.checkGuess(inputGroup);
+
+        assertEquals(obs.getMatchCount(), 0);
+    }
+
+    @Test 
+    public void testCheckGuessAllCorrectReturnCorrectWordGroup() {
+        class Obs implements Observer {
+            int matchCount;
+            WordGroup correctGroup;
+
+            @Override
+            public void update(int matchCount, WordGroup correctWords) {
+                this.matchCount = matchCount;
+                this.correctGroup = correctWords;
+            }
+
+            public int getMatchCount() {
+                return this.matchCount;
+            }
+
+            public WordGroup getCorrectGroup() {
+                return this.correctGroup;
+            }
+        }
+
+        String[] wordGroupString = new String[4];
+        String[] inputGroupString = new String[4];
+
+        for (int i = 0; i < 4; i++) {
+            wordGroupString[i] = "test";
+            inputGroupString[i] = "test";
+        }
+
+        for (int i = 0; i < 4; i++) {
+            this.wordGroups[i] = new WordGroup(wordGroupString, null, null);
+        }
+
+        WordGroup inputGroup = new WordGroup(inputGroupString, null, null);
+        
+        Obs obs = new Obs();
+        this.game.addObserver(obs);
+
+        this.game.setWordGroups(this.wordGroups);
+
+        game.checkGuess(inputGroup);
+
+        WordGroup correctWords = obs.getCorrectGroup();
+        String[] correctStringArray = correctWords.getWordList();
+
+        assertEquals(obs.getMatchCount(), 4);
+
+        for (int i = 0; i < 4; i++) {
+            assertEquals(correctStringArray[i], "test");
+        }
+    }
+
+    @After
+    public void tearDown() {
+        this.messageLabel.setText("");
+        this.controller = null;
     }
 }
