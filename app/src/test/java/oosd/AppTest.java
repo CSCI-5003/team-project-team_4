@@ -18,6 +18,7 @@ import oosd.model.Game;
 import oosd.model.GameDifficulty;
 import oosd.model.Observer;
 import oosd.model.WordDifficulty;
+import java.awt.event.ActionEvent;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -33,6 +34,7 @@ public class AppTest {
     private WordGrid wordGrid;
     private WordGroup wordGroups[];
     private Game game;
+    private WordButton[] wordButtons;
     
     @Before
     public void setUp() {
@@ -41,11 +43,20 @@ public class AppTest {
         this.messageLabel = new JLabel();
         this.messageLabel.setText("Default Text");
         this.game = new Game(GameDifficulty.MEDIUM);
+        
 
         this.wordGroups = new WordGroup[4];
 
         this.controller.setMessageLabel(messageLabel);
-        this.wordGrid = new WordGrid(this.wordGroups, new WordButton[16]);
+
+        WordButton[] wordButtons = new WordButton[16];
+        this.wordButtons = wordButtons;
+
+        for (int i = 0; i < 16; i++) {
+            wordButtons[i] = new WordButton("test");
+        }
+
+        this.wordGrid = new WordGrid(this.wordGroups, wordButtons);
         
     }
 
@@ -73,6 +84,8 @@ public class AppTest {
             WordButton button = new WordButton("test");
             this.controller.handleButtonClick(button);
         }
+
+        controller.actionPerformed(new ActionEvent( this, ActionEvent.ACTION_PERFORMED, "Medium"));
 
         this.controller.setWordGrid(this.wordGrid);
         this.controller.handleSubmit();
