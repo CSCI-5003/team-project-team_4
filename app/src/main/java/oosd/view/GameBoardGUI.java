@@ -39,7 +39,6 @@ public class GameBoardGUI extends JFrame implements Observer {
 
     public ArrayList<JButton> selectedButtons = new ArrayList<>(); // To store selected buttons
     public ArrayList<JButton> disabledButtons = new ArrayList<>(); // To store disabled buttons
-    public ArrayList<Integer> occupiedButtons = new ArrayList<>();
     public ArrayList<String> categoryArray = new ArrayList<>();
     public ArrayList<String> wordArray = new ArrayList<>();
     
@@ -78,11 +77,14 @@ public class GameBoardGUI extends JFrame implements Observer {
     private JLabel scoreLabel;
     private JLabel messageLabel;
 
+    private String[][] buttonAndLocation;
+
     public GameBoardGUI(GameDifficulty gameDifficulty, Controller controller, ScoreManager scoreManager, EndGame endGame) {
         width = 130;
         height = 95;
         x = new int[]{55,195,335,475,55,195,335,475,55,195,335,475,55,195,335,475};
         y = new int[]{25,25,25,25,130,130,130,130,235,235,235,235,340,340,340,340};
+        buttonAndLocation = new String[16][16]; //[index][word]
 
         MAX_SELECTION = 4;
         score = 0;
@@ -141,7 +143,11 @@ public class GameBoardGUI extends JFrame implements Observer {
 
         for (int i = 0; i < 16; i++) {
             String word = "Word " + i;
-            buttons[i] = new WordButton(String.valueOf(word));
+
+            String wordAsString = String.valueOf(word);
+            String index = String.valueOf(i);
+
+            buttons[i] = new WordButton(wordAsString);
             buttons[i].setEnabled(true);
             buttons[i].setBounds(x[i], y[i], width, height);
             buttons[i].setOpaque(true);
@@ -149,7 +155,6 @@ public class GameBoardGUI extends JFrame implements Observer {
             buttons[i].setBackground(ColorCodes.lightGray);
 
             buttons[i].addActionListener(e -> controller.handleButtonClick((WordButton) e.getSource()));
-            occupiedButtons.add(i);
         }
 
         WordGrid gridPanel = makeGrid(buttons);
@@ -445,7 +450,6 @@ public class GameBoardGUI extends JFrame implements Observer {
     
         for (int i = 0; i < 4; i++) {
             WordDifficulty wordDifficulty = WordDifficulty.YELLOW;
-            //TODO: why^
             switch (this.game.getGameDifficulty()) {
                 case EASY:
                     switch (i) {
@@ -541,108 +545,45 @@ public class GameBoardGUI extends JFrame implements Observer {
         String[] correctGuesses = wordGroup.getWordList();
         WordButton[] wordButtons = this.wordGrid.getWordButtons();
         int[] toSwap = new int[4];
-
-        switch (groupsRemaining) {
-            case 4:
-                for (int i = 0; i < 4; i++) {
-                    toSwap[i] = findWord(wordButtons, correctGuesses[i]);
-                }
-                int[] row1 = {0, 1, 2, 3};
-
-                for (int i = 0; i < 4; i++) {
-                    wordButtons[toSwap[i]].setBounds(x[row1[i]], y[row1[i]], width, height);
-                    wordButtons[row1[i]].setBounds(x[toSwap[i]], y[toSwap[i]], width, height);
-
-                    int tempx = x[row1[i]];
-                    x[row1[i]] = x[toSwap[i]];
-                    x[toSwap[i]] = tempx;
-
-                    int tempy = y[row1[i]];
-                    y[row1[i]] = y[toSwap[i]];
-                    y[toSwap[i]] = tempy;
-
-                    WordButton tempBut = wordButtons[row1[i]];
-                    wordButtons[row1[i]] = wordButtons[toSwap[i]];
-                    wordButtons[toSwap[i]] = tempBut;
-                }
-                break;
-
-            case 3:
-                for (int i = 0; i < 4; i++) {
-                    toSwap[i] = findWord(wordButtons, correctGuesses[i]);
-                }
-                int[] row2 = {4, 5, 6, 7};
-
-                for (int i = 0; i < 4; i++) {
-                    wordButtons[toSwap[i]].setBounds(x[row2[i]], y[row2[i]], width, height);
-                    wordButtons[row2[i]].setBounds(x[toSwap[i]], y[toSwap[i]], width, height);
-
-                    int tempx = x[row2[i]];
-                    x[row2[i]] = x[toSwap[i]];
-                    x[toSwap[i]] = tempx;
-
-                    int tempy = y[row2[i]];
-                    y[row2[i]] = y[toSwap[i]];
-                    y[toSwap[i]] = tempy;
-
-                    WordButton tempBut = wordButtons[row2[i]];
-                    wordButtons[row2[i]] = wordButtons[toSwap[i]];
-                    wordButtons[toSwap[i]] = tempBut;
-                }
-
-                break;
-            case 2:
-                for (int i = 0; i < 4; i++) {
-                    toSwap[i] = findWord(wordButtons, correctGuesses[i]);
-                }
-                int[] row3 = {8, 9, 10, 11};
-
-                for (int i = 0; i < 4; i++) {
-                    wordButtons[toSwap[i]].setBounds(x[row3[i]], y[row3[i]], width, height);
-                    wordButtons[row3[i]].setBounds(x[toSwap[i]], y[toSwap[i]], width, height);
-
-                    int tempx = x[row3[i]];
-                    x[row3[i]] = x[toSwap[i]];
-                    x[toSwap[i]] = tempx;
-
-                    int tempy = y[row3[i]];
-                    y[row3[i]] = y[toSwap[i]];
-                    y[toSwap[i]] = tempy;
-
-                    WordButton tempBut = wordButtons[row3[i]];
-                    wordButtons[row3[i]] = wordButtons[toSwap[i]];
-                    wordButtons[toSwap[i]] = tempBut;
-                }
-                
-                break;
-            case 1:
-                for (int i = 0; i < 4; i++) {
-                    toSwap[i] = findWord(wordButtons, correctGuesses[i]);
-                }
-                int[] row4 = {12, 13, 14, 15};
-
-                for (int i = 0; i < 4; i++) {
-                    wordButtons[toSwap[i]].setBounds(x[row4[i]], y[row4[i]], width, height);
-                    wordButtons[row4[i]].setBounds(x[toSwap[i]], y[toSwap[i]], width, height);
-                    
-                    int tempx = x[row4[i]];
-                    x[row4[i]] = x[toSwap[i]];
-                    x[toSwap[i]] = tempx;
-
-                    int tempy = y[row4[i]];
-                    y[row4[i]] = y[toSwap[i]];
-                    y[toSwap[i]] = tempy;
-
-                    WordButton tempBut = wordButtons[row4[i]];
-                    wordButtons[row4[i]] = wordButtons[toSwap[i]];
-                    wordButtons[toSwap[i]] = tempBut;
-                }
-
-                break;
-            default:
-                break;
+        int[] row = getRowForGroup(groupsRemaining);
+    
+        // Find the buttons corresponding to the correct guesses
+        for (int i = 0; i < 4; i++) {
+            toSwap[i] = findWord(wordButtons, correctGuesses[i]);
+        }
+        Arrays.sort(toSwap);
+    
+        // Swap the word buttons based on the current row
+        for (int i = 0; i < 4; i++) {
+            //System.out.println(toSwap[i] + " " + row[i]);
+            swapButtonsAndPositions(wordButtons, toSwap[i], row[i]);
         }
     }
+    
+    private int[] getRowForGroup(int groupsRemaining) {
+        switch (groupsRemaining) {
+            case 4: return new int[]{0, 1, 2, 3};
+            case 3: return new int[]{4, 5, 6, 7};
+            case 2: return new int[]{8, 9, 10, 11};
+            case 1: return new int[]{12, 13, 14, 15};
+            default: return new int[]{};
+        }
+    }
+    
+    private void swapButtonsAndPositions(WordButton[] wordButtons, int index1, int index2) {
+
+        // Update button positions
+        wordButtons[index2].setBounds(x[index1], y[index1], width, height);
+        wordButtons[index1].setBounds(x[index2], y[index2], width, height);
+        
+        //System.out.println("Correct Answer indeces: " + x[index1] + ", " + y[index1]);
+        //System.out.println("Row indeces: " + x[index2] + ", " + y[index2]);
+        
+        WordButton tempBut = wordButtons[index1];
+        wordButtons[index1] = wordButtons[index2];
+        wordButtons[index2] = tempBut;
+    }
+    
     
     private int findWord(WordButton[] wordButtons, String findMe) {
         for (int i = 0; i < 16; i++) {
@@ -664,7 +605,7 @@ public class GameBoardGUI extends JFrame implements Observer {
             scoreManager.saveScore();
             return;
         }
-        System.out.println("Lives " + lives);
+        //System.out.println("Lives " + lives);
         
         if (lives == 0) {
             messageLabel.setText("You Lost!");
@@ -677,8 +618,8 @@ public class GameBoardGUI extends JFrame implements Observer {
         } else {
             scoreLabel.setText("Score: " + scoreManager.getCurrentScore()); // Update score label
         }
-        System.out.println("groups remaining: " + groupsRemaining);
-        System.out.println("lives left: " + lives);
+        //System.out.println("groups remaining: " + groupsRemaining);
+        //System.out.println("lives left: " + lives);
     }
     
     public JButton getSubmitBut() {
@@ -719,7 +660,7 @@ public class GameBoardGUI extends JFrame implements Observer {
     
     @Override
     public void update(int matchCount, WordGroup correctWords) {
-        System.out.println("matchCount on view is: " + matchCount);
+        //System.out.println("matchCount on view is: " + matchCount);
         checkWinLose(game.getLives(), game.getGroupsRemaining());
         int lives = game.getLives();
         switch(matchCount) {
@@ -741,10 +682,10 @@ public class GameBoardGUI extends JFrame implements Observer {
                 disableWordGroup(correctWords); //pass the words to get disabled
                 moveWords(correctWords, game.getGroupsRemaining());
                 String wordsCorrect = String.join(" ", correctWords.getWordList());
-                System.out.println("case 4 words correct: " + wordsCorrect);
+                //System.out.println("case 4 words correct: " + wordsCorrect);
                 
                 String difficulty = correctWords.getWordDifficulty().toString();
-                System.out.println("group difficulty: " + difficulty);
+                //System.out.println("group difficulty: " + difficulty);
 
                 String correctWordString = String.join(" ", correctWords.getWordList());
 
@@ -784,18 +725,18 @@ public class GameBoardGUI extends JFrame implements Observer {
                     result1.setVisible(true);
 
                 }
-                System.out.println("groups remaining = " + game.getGroupsRemaining());
+                //System.out.println("groups remaining = " + game.getGroupsRemaining());
                 break;
         }
         checkWinLose(game.getLives(), game.getGroupsRemaining());
     }
 
-    public static void printButtonListWithPositions(ArrayList<String> buttonList) {
+    /*public static void printButtonListWithPositions(ArrayList<String> buttonList) {
         for (int i = 0; i < buttonList.size(); i++) {
             String button = buttonList.get(i);
             System.out.println("Position " + i + ": " + button); 
         }
-    }
+    }*/
 
     public ArrayList<JButton> getButton(String word) {
 

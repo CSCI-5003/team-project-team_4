@@ -262,7 +262,7 @@ public class Controller implements ActionListener {
     
             // Add the guess to already guessed groups
             wordGrid.addGuess(guess);
-            System.out.println("Already guessed groups: " + wordGrid.getAlreadyGuessed());
+            //System.out.println("Already guessed groups: " + wordGrid.getAlreadyGuessed());
     
             // Check the guess for correctness
             game.checkGuess(guess);
@@ -270,16 +270,6 @@ public class Controller implements ActionListener {
         } catch (Exception e) {
             messageLabel.setText("Error handling your guess. Please try again.");
             e.printStackTrace();
-        }
-    }
-
-    private int calculatePoints(WordGroup wordGroup) {
-        switch (wordGroup.getWordDifficulty()) {
-            case YELLOW: return 5;
-            case GREEN: return 10;
-            case BLUE: return 15;
-            case PURPLE: return 20;
-            default: return 0;
         }
     }
     

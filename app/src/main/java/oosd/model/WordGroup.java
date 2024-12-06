@@ -49,7 +49,7 @@ public class WordGroup {
 
         for (int i = 0; i < wordList.length; i++) {
             thisWords[i] = wordList[i];
-            System.out.println("this words i: " + thisWords[i]);
+            //System.out.println("this words i: " + thisWords[i]);
         }
         for (int i = 0; i < other.wordList.length; i++) {
             otherWords[i] = other.wordList[i];
